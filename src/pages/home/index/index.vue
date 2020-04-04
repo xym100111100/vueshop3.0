@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <div class="header scroll">
+    <div :class="{header:true, scroll:isScrollTop}">
       <div class="classify-icon"></div>
       <div class="search-wrap">
         <div class="search-icon"></div>
@@ -9,8 +9,22 @@
       <div class="login">登录</div>
     </div>
     <div class="banner-wrap">
+      <div class="swiper-container" ref="swiper-container">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <img src="//vueshop.glbuys.com/uploadfiles/1524206455.jpg" alt="滚动栏图片" />
+          </div>
+          <div class="swiper-slide">
+            <img src="//vueshop.glbuys.com/uploadfiles/1524206455.jpg" alt="滚动栏图片" />
+          </div>
+          <div class="swiper-slide">
+            <img src="//vueshop.glbuys.com/uploadfiles/1524206455.jpg" alt="滚动栏图片" />
+          </div>
+        </div>
+        <div class="swiper-pagination" ref="swiper-pagination" ></div>
+      </div>
+
       <!-- 使用两个//会自动拼接网站的http或https -->
-      <img src="//vueshop.glbuys.com/uploadfiles/1524206455.jpg" alt="滚动栏图片" />
     </div>
     <div class="quick-nav">
       <ul class="item">
@@ -240,7 +254,7 @@
         <div class="goods-title">ONLY冬装新品雪纺拼接流苏腰带长款连衣裙女</div>
         <div class="goods-price">¥399</div>
       </div>
-            <div class="goods-list">
+      <div class="goods-list">
         <div class="goods-image">
           <img src="//vueshop.glbuys.com/uploadfiles/1484283665.jpg" alt />
         </div>
@@ -252,17 +266,68 @@
 </template>
 
 <script>
+import Swiper from "../../../assets/js/libs/swiper";
 export default {
   name: "index",
   data() {
-    return {};
+    return {
+      isScrollTop: true
+    };
   },
-  created() {},
-  methods: {}
+  created() {
+    window.addEventListener("scroll", this.eventScrollTop);
+    // 不需要渲染到页面的全局变量就放在这里面
+    this.isScroll = true;
+  },
+  mounted() {
+    new Swiper(this.$refs["swiper-container"], {
+      autoplay: 1000,
+      pagination: this.$refs["swiper-pagination"],
+      paginationClickable :true,
+      autoplayDisableOnInteraction : false,
+
+    });
+  },
+  methods: {
+    eventScrollTop() {
+      // 这个document.body.scrollTop是ie和 Safari
+      // 这个document.documentElement.scrollTop谷歌
+      // 这个是性能问题，必须是用this.isScroll全局变量搞定
+      let isScrollTop =
+        document.body.scrollTop || document.documentElement.scrollTop;
+      if (isScrollTop >= 150) {
+        if (this.isScroll) {
+          this.isScroll = false;
+          console.log(true);
+          this.isScrollTop = true;
+        }
+      } else {
+        if (this.isScroll === false) {
+          console.log(false);
+          this.isScroll = true;
+          this.isScrollTop = false;
+        }
+      }
+    }
+  },
+
+  destroyed() {
+    // 卸载监听时间，但是keep-alive的页面需要使用下面的
+    window.removeEventListener("scroll", this.eventScrollTop);
+  },
+  activated() {
+    // 这里也是因为keep-alive的原因，不只是要在created中监听，这里也要，否则切换回来监听事件会无法监听
+    // 与下面的deactivated是用来做keep-alive的
+    window.addEventListener("scroll", this.eventScrollTop);
+  },
+  deactivated() {
+    window.removeEventListener("scroll", this.eventScrollTop);
+  }
 };
 </script>
 
 <style scoped>
+@import "../../../assets/css/common/swiper.css";
 .page {
   /* 这里必须定义，这样后面好找问题 ,而且可以撑开与底部的距离*/
   width: 100%;

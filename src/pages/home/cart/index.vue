@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="page" >
         购物车
     </div>
 </template>
@@ -13,5 +13,8 @@
 </script>
 
 <style scoped>
-
+.page{
+    width: 100%;
+    height: 2000px;
+}
 </style>
