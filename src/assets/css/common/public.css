@@ -1,0 +1,11 @@
+html,body{
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin:0px;
+    padding:0px;
+    background-color:#EFEFEF;
+}
+ul,li{margin:0px;padding:0px;list-style: none;}
+/* outline（轮廓）是绘制于元素周围的一条线，位于边框边缘的外围，可起到突出元素的作用。 */
+input,button{border:0 none;border-radius: 0px;outline:none;}
