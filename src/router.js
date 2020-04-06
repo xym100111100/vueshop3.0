@@ -2,7 +2,17 @@ import Vue from 'vue';
 import Router from 'vue-router';
 
 Vue.use(Router);
+// 重写push方法，避免形容路径出现警告
+const routerPush = Router.prototype.replace
+Router.prototype.replace = function replace(location) {
+    return routerPush.call(this, location).catch(error => error)
+}
 
+// 重写replace方法，避免形容路径出现警告
+const originalReplace = Router.prototype.replace;
+Router.prototype.replace = function replace(location) {
+    return originalReplace.call(this, location).catch(err => err);
+};
 let router = new Router({
     mode: "hash",//1、hash哈希：有#号。2、history历史：没有#号
     base: process.env.BASE_URL, //自动获取根目录路径

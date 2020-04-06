@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <div :class="{header:true, scroll:isScrollTop}">
-      <div class="classify-icon"></div>
+      <div class="classify-icon" @click="$router.push('/goods/classify')" ></div>
       <div class="search-wrap">
         <div class="search-icon"></div>
         <div class="text">请输入商品名称</div>
@@ -207,7 +207,7 @@ export default {
   },
   activated() {
     // 这里也是因为keep-alive的原因，不只是要在created中监听，这里也要，否则切换回来监听事件会无法监听
-    // 与下面的deactivated是用来做keep-alive的
+    // 与下面的deactivated是用来做keep-alive的,但是deactivated获取不到dom
     window.addEventListener("scroll", this.eventScrollTop);
   },
   deactivated() {
