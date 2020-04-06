@@ -1,17 +1,19 @@
 <template>
   <div ref="goods-classify-content" class="goods-content-main">
     <div>
-      <div class="goods-wrap" v-for="(item,index) in goods" :key="index">
+      <!-- 这里不能放v-if，不然会找不到高度 -->
+      <div v-show="goods.length > 0" class="goods-wrap" v-for="(item,index) in goods" :key="index">
         <div class="classify-name">{{item.title}}</div>
         <div class="goods-items-wrap">
           <ul v-for="(item2,index2) in item.goods" :key="index2">
             <li>
-              <img :src="item2.image" alt />
+              <img src="../../../assets/images/common/lazyImg.jpg" :data-echo="item2.image" alt />
             </li>
             <li>{{item2.title}}</li>
           </ul>
         </div>
       </div>
+      <div v-show="goods.length <= 0" class="no-data">没有商品数据!</div>
     </div>
   </div>
 </template>
@@ -26,22 +28,26 @@ export default {
     },
     ...mapActions({
       getGoodsData: "goods/getGoods"
-    })
+    }),
+    init(cid) {
+      this.getGoodsData({
+        cid: cid,
+        success: () => {
+          this.$nextTick(() => {
+            this.myIScroll.refresh();
+            this.$utils.lazyImg();
+          });
+        }
+      });
+    }
   },
   created() {
     this.cid = this.$route.cid ? this.$route.cid : "";
-    this.getGoodsData({
-      cid: this.cid,
-      success: () => {
-        this.$nextTick(() => {
-          this.myIScroll.refresh();
-        });
-      }
-    });
+    this.init(this.cid);
   },
   beforeRouteUpdate(to, from, next) {
     this.cid = to.query.cid ? to.query.cid : "";
-    this.getGoodsData({ cid: this.cid });
+    this.init(this.cid);
     next();
   },
   computed: {
@@ -58,6 +64,10 @@ export default {
       scrollX: false,
       scrollY: true,
       preventDefault: false
+    });
+    this.myIScroll.on("scrollEnd", () => {
+      // 这里是处理图片懒加载，但是该插件lazyImg是监听window的scroll事件，所以这里需要回调
+      this.$utils.lazyImg();
     });
   },
   beforeDestroy() {

@@ -1,8 +1,8 @@
 <template>
   <div class="page">
     <div :class="{header:true, scroll:isScrollTop}">
-      <div class="classify-icon" @click="$router.push('/goods/classify')" ></div>
-      <div class="search-wrap">
+      <div class="classify-icon" @click="$router.push('/goods/classify')"></div>
+      <div class="search-wrap" @click="searchShow.show=true">
         <div class="search-icon"></div>
         <div class="text">请输入商品名称</div>
       </div>
@@ -42,7 +42,11 @@
             <div class="goods-tip">精品打折</div>
             <div :class="'goods-price bg-color-'+index">{{item.items && item.items[0].price}}元</div>
             <div class="goods-image">
-              <img src="../../../assets/images/common/lazyImg.jpg" :data-echo="item.items && item.items[0].image" alt />
+              <img
+                src="../../../assets/images/common/lazyImg.jpg"
+                :data-echo="item.items && item.items[0].image"
+                alt
+              />
             </div>
           </div>
           <div class="goods-column">
@@ -50,7 +54,11 @@
               <div class="goods-list-title">{{item2.title}}</div>
               <div class="goods-list-tip">品质精挑</div>
               <div class="goods-list-image">
-                <img src="../../../assets/images/common/lazyImg.jpg" :data-echo="item2.image" :alt="item2.title" />
+                <img
+                  src="../../../assets/images/common/lazyImg.jpg"
+                  :data-echo="item2.image"
+                  :alt="item2.title"
+                />
               </div>
             </div>
           </div>
@@ -73,7 +81,11 @@
             <div class="goods-title">{{item2.title}}</div>
             <div class="goods-tip">火爆开售</div>
             <div class="goods-image">
-              <img src="../../../assets/images/common/lazyImg.jpg" :data-echo="item2.image" :alt="item2.title" />
+              <img
+                src="../../../assets/images/common/lazyImg.jpg"
+                :data-echo="item2.image"
+                :alt="item2.title"
+              />
             </div>
           </div>
         </div>
@@ -81,7 +93,11 @@
           <div class="goods-list" v-for="(item3,index3) in item.items.slice(2,6)" :key="index3">
             <div class="goods-list-title">{{item3.title}}</div>
             <div class="goods-list-image">
-              <img src="../../../assets/images/common/lazyImg.jpg" :data-echo="item3.image" :alt="item3.title" />
+              <img
+                src="../../../assets/images/common/lazyImg.jpg"
+                :data-echo="item3.image"
+                :alt="item3.title"
+              />
             </div>
             <div class="goods-list-price">¥{{item3.price}}</div>
             <div class="price-line">¥{{item3.price*2}}</div>
@@ -106,6 +122,7 @@
         <div class="goods-title">{{item.title}}</div>
         <div class="goods-price">¥{{item.price}}</div>
       </div>
+      <my-search :show="searchShow"></my-search>
     </div>
   </div>
 </template>
@@ -113,12 +130,18 @@
 <script>
 import Swiper from "../../../assets/js/libs/swiper";
 import { mapActions, mapState } from "vuex";
+import MySearch from "../../../components/search";
+
 export default {
   name: "index",
   data() {
     return {
-      isScrollTop: true
+      isScrollTop: true,
+      searchShow: { show: false }
     };
+  },
+  components: {
+    MySearch
   },
   created() {
     window.addEventListener("scroll", this.eventScrollTop);

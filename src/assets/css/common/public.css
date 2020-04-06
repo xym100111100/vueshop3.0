@@ -8,3 +8,9 @@ html,body{
 }
 ul,li{margin:0px;padding:0px;list-style: none;}
 input,button{border:0 none;border-radius: 0px;outline:none;}
+
+.no-data{
+    text-align: center;
+    margin-top:0.5rem;
+  font-size: 0.28rem;
+}

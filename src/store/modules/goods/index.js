@@ -31,7 +31,7 @@ export default {
       },
       ["SET_GOODS"](state, payload) {
          state.goods = payload.goods
-        // console.log(state.goods)
+         // console.log(state.goods)
       }
    },
    actions: {
@@ -57,15 +57,16 @@ export default {
       // 右侧商品
       getGoods(conText, payload) {
          getGoodsData(payload.cid).then((res) => {
-           // console.log(res)
+            // console.log(res)
             if (res.code === 200) {
                conText.commit("SET_GOODS", { goods: res.data })
                if (payload && payload.success) {
                   payload.success()
                }
-            } else {
-               if (payload && payload.error) {
-                  payload.error()
+            } else if (res.code === 201) {// 接口中201表示没有数据，但同样要刷新获取dom的滚动插件
+               conText.commit("SET_GOODS", { goods: [] })
+               if (payload && payload.success) {
+                  payload.success()
                }
             }
          })
