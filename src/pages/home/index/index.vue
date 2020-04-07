@@ -137,7 +137,7 @@ export default {
   data() {
     return {
       isScrollTop: true,
-      searchShow: { show: false }
+      searchShow: { show: false } // 这里使用对象的形式给子组件传值是为了在子组件能修改该值，否则需要子组件调用父组件的方法
     };
   },
   components: {

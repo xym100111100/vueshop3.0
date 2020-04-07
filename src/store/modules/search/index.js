@@ -9,6 +9,7 @@ export default {
     mutations:{
         ["SET_KEYWORDS"](state,payload){
             state.historyKeywords=payload.historyKeywords;
+            // 存储到localStorage里面最好转成json
             localStorage['historyKeywords']=JSON.stringify(state.historyKeywords);
         },
         ["CLEAR_KEYWORDS"](state,payload){

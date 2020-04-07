@@ -100,6 +100,11 @@ let router = new Router({
             ]
         },
         {
+            path: '/goods/search',
+            name: "goods-search",
+            component: () => import("./pages/home/goods/search")
+        },
+        {
             path: "/skip",
             name: "skip",
             component: () => import("./pages/skip")

@@ -2,7 +2,7 @@
   <div class="page">
     <div class="search-header">
       <div class="back" @click="goBack()"></div>
-      <div class="search">请输入宝贝名称</div>
+      <div class="search" @click="searchShow.show = true">请输入宝贝名称</div>
     </div>
     <div class="goods-main">
       <div ref="scroll-classify" class="classify-wrap">
@@ -19,6 +19,7 @@
       <div class="goods-content">
         <router-view></router-view>
       </div>
+      <my-search :show="searchShow"></my-search>
     </div>
   </div>
 </template>
@@ -26,7 +27,19 @@
 <script>
 import IScroll from "../../../assets/js/libs/iscroll";
 import { mapState, mapActions, mapMutations } from "vuex";
+import MySearch from "../../../components/search";
+
 export default {
+  data() {
+    return {
+      searchShow: {
+        show: false
+      }
+    };
+  },
+  components: {
+    MySearch
+  },
   methods: {
     ...mapActions({
       getClassifyData: "goods/getClassify"
