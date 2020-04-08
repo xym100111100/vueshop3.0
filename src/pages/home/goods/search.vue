@@ -106,11 +106,21 @@
             <div class="attr-name">价格区间</div>
             <div class="price-wrap">
               <div class="price-input">
-                <input type="tel" placeholder="最低价" value />
+                <input
+                  @input="SET_MINPRICE({minPrice:$event.target.value})"
+                  type="tel"
+                  placeholder="最低价"
+                  :value="minPrice"
+                />
               </div>
               <div class="price-line"></div>
               <div class="price-input">
-                <input type="tel" placeholder="最高价" value />
+                <input
+                  @input="SET_MAXPRICE({maxPrice:$event.target.value})"
+                  type="tel"
+                  placeholder="最高价"
+                  :value="maxPrice"
+                />
               </div>
             </div>
             <div @click="HIDE_PRICE" :class="{'attr-icon':true, up:pariceData.isHide}"></div>
@@ -126,26 +136,21 @@
         </div>
         <div style="width:100%;height:0.3rem;backgroundColor:#EFEFEF"></div>
         <div>
-          <div class="attr-wrap">
+          <div class="attr-wrap" v-for="(item,index) in attrs" :key="index">
             <div class="attr-title-wrap">
-              <div class="attr-name">颜色</div>
-              <div class="attr-icon up"></div>
+              <div class="attr-name">{{item.title}}</div>
+              <div @click="HIDE_ATTR({index})" :class="{'attr-icon':true, up:item.isHide}"></div>
             </div>
-            <div class="item-wrap">
-              <div class="item active">白色</div>
-              <div class="item">黑色</div>
+            <div class="item-wrap" v-show="!item.isHide">
+              <div
+                @click="SELECT_ATTR({index,index2})"
+                :class="{item:true ,active:item2.active}"
+                v-for="(item2,index2) in item.param"
+                :key="index2"
+              >{{item2.title}}</div>
             </div>
           </div>
-          <div class="attr-wrap">
-            <div class="attr-title-wrap">
-              <div class="attr-name">尺码</div>
-              <div class="attr-icon up"></div>
-            </div>
-            <div class="item-wrap">
-              <div class="item active">30</div>
-              <div class="item">40</div>
-            </div>
-          </div>
+
           <div style="width:100%;height:1px;backgroundColor:#EFEFEF"></div>
         </div>
         <div style="width:100%;height:1.2rem"></div>
@@ -216,7 +221,10 @@ export default {
   computed: {
     ...mapState({
       classifys: state => state.goods.classifys,
-      pariceData: state => state.search.pariceData
+      pariceData: state => state.search.pariceData,
+      minPrice: state => state.search.minPrice,
+      maxPrice: state => state.search.maxPrice,
+      attrs: state => state.search.attrs
     })
   },
   components: {
@@ -229,7 +237,11 @@ export default {
   methods: {
     ...mapMutations({
       HIDE_PRICE: "search/HIDE_PRICE",
-      SELECT_PRICE: "search/SELECT_PRICE"
+      SELECT_PRICE: "search/SELECT_PRICE",
+      SET_MINPRICE: "search/SET_MINPRICE",
+      SET_MAXPRICE: "search/SET_MAXPRICE",
+      HIDE_ATTR: "search/HIDE_ATTR",
+      SELECT_ATTR: "search/SELECT_ATTR"
     }),
     scrollPreventDefault(e) {
       e.preventDefault();
