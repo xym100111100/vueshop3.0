@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { mapMutations, mapState, mapActions } from "vuex";
+import { mapMutations, mapState, mapActions } from "vuex"; 
 import { Dialog } from "vant";
 export default {
   name: "my-search",
@@ -91,7 +91,6 @@ export default {
         this.SET_KEYWORDS({ historyKeywords: this.keywords });
       }
       this.show.show = false;
-      console.log(this.isLocal)
       if (this.isLocal) {
         this.$router.replace("/goods/search?keyword=" + tmpKeyword);
       } else {

@@ -10,7 +10,7 @@ export default {
    mutations: {
       ["SET_CLASSIFYS"](state, payload) {
          state.classifys = payload.classifys
-
+         console.log( state.classifys)
       },
       ["SELECT_ITEM"](state, payload) {
          // 对数组操作前先对数组进行判断
@@ -38,6 +38,7 @@ export default {
       // 左侧分类
       getClassify(conText, payload) {
          getClassifyData().then((res) => {
+            
             if (res.code === 200) {
                for (let index = 0; index < res.data.length; index++) {
                   res.data[index].active = false

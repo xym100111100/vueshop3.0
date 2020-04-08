@@ -7,7 +7,7 @@
           <div class="search-icon"></div>
           <div class="search-text">{{keyword}}</div>
         </div>
-        <div class="screen-btn">筛选</div>
+        <div class="screen-btn" @click="isScreen = true">筛选</div>
       </div>
       <div class="order-main">
         <div :class="{'order-item':true, active:ispriceOrder}">
@@ -22,8 +22,8 @@
             >{{item.title}}</li>
           </ul>
         </div>
-        <div class="order-item active">
-          <div class="order-text">销量</div>
+        <div :class="{'order-item':true, active:isSaleOrder}">
+          <div class="order-text" @click="selectSales">销量</div>
         </div>
       </div>
     </div>
@@ -82,30 +82,22 @@
       </div>
       <div class="null-item">没有相关商品！</div>
     </div>
-    <div ref="mask" class="mask" v-show="false"></div>
-    <div ref="screen" class="screen unmove">
+    <!-- 这里是最外层的蒙版,且与下面的内容独立内不是内部嵌套div-->
+    <div ref="mask" class="mask" v-show="isScreen" @click="isScreen = false"></div>
+    <div ref="screen" :class="isScreen?'screen move':'screen unmove'">
       <div>
         <div class="attr-wrap">
-          <div class="attr-title-wrap">
+          <div class="attr-title-wrap" @click="isClassify = !isClassify">
             <div class="attr-name">分类</div>
-            <div class="attr-icon"></div>
+            <div :class="{'attr-icon':true,up:isClassify}"></div>
           </div>
-          <div class="item-wrap">
-            <div class="item active">潮流女装</div>
-            <div class="item">品牌男装</div>
-            <div class="item">数码产品</div>
-            <div class="item">品牌男装</div>
-            <div class="item">数码产品</div>
-            <div class="item">品牌男装</div>
-            <div class="item">数码产品</div>
-            <div class="item">品牌男装</div>
-            <div class="item">数码产品</div>
-            <div class="item">品牌男装</div>
-            <div class="item">数码产品</div>
-            <div class="item">品牌男装</div>
-            <div class="item">数码产品</div>
-            <div class="item">品牌男装</div>
-            <div class="item">数码产品</div>
+          <div class="item-wrap" v-show="isClassify">
+            <div
+              v-for="(item,index) in classifys"
+              :key="index"
+              :class="{item:true, active:item.active}"
+              @click="selectClassify({index})"
+            >{{item.title}}</div>
           </div>
         </div>
         <div style="width:100%;height:1px;backgroundColor:#EFEFEF"></div>
@@ -121,15 +113,15 @@
                 <input type="tel" placeholder="最高价" value />
               </div>
             </div>
-            <div class="attr-icon"></div>
+            <div @click="HIDE_PRICE" :class="{'attr-icon':true, up:pariceData.isHide}"></div>
           </div>
-          <div class="item-wrap">
-            <div class="item active">1-50</div>
-            <div class="item">51-99</div>
-            <div class="item">100-300</div>
-            <div class="item">301-1000</div>
-            <div class="item">1001-4000</div>
-            <div class="item">4001-9999</div>
+          <div class="item-wrap" v-show="!pariceData.isHide">
+            <div
+              :class="{item:true, active:item.active}"
+              v-for="(item,index) in pariceData.items"
+              :key="index"
+              @click="SELECT_PRICE({index})"
+            >{{item.price1}}-{{item.price2}}</div>
           </div>
         </div>
         <div style="width:100%;height:0.3rem;backgroundColor:#EFEFEF"></div>
@@ -173,11 +165,14 @@
 
 <script>
 import MySearch from "../../../components/search";
+import IScroll from "../../../assets/js/libs/iscroll";
 
+import { mapState, mapActions, mapMutations } from "vuex";
 export default {
   name: "goods-search",
   data() {
     return {
+      isClassify: true,
       keyword: this.$route.query.keyword,
       searchShow: {
         show: false
@@ -187,8 +182,42 @@ export default {
         { otype: "all", title: "综合", active: false },
         { otype: "up", title: "价格从低到高", active: true },
         { otype: "down", title: "价格从高到低", active: false }
-      ]
+      ],
+      isSaleOrder: false,
+      isScreen: false
     };
+  },
+  mounted() {
+    this.$refs["screen"].addEventListener(
+      "touchmove",
+      this.scrollPreventDefault
+    );
+    this.myIScroll = new IScroll(this.$refs["screen"], {
+      scrollX: false,
+      scrollY: true,
+      preventDefault: false
+    });
+  },
+  beforeDestroy() {
+    this.$refs["screen"].removeEventListener(
+      "touchmove",
+      this.scrollPreventDefault
+    );
+  },
+  created() {
+    this.getClassify({
+      success: () => {
+        this.$nextTick(() => {
+          this.myIScroll.refresh();
+        });
+      }
+    });
+  },
+  computed: {
+    ...mapState({
+      classifys: state => state.goods.classifys,
+      pariceData: state => state.search.pariceData
+    })
   },
   components: {
     MySearch
@@ -198,24 +227,45 @@ export default {
     next();
   },
   methods: {
+    ...mapMutations({
+      HIDE_PRICE: "search/HIDE_PRICE",
+      SELECT_PRICE: "search/SELECT_PRICE"
+    }),
+    scrollPreventDefault(e) {
+      e.preventDefault();
+    },
+    ...mapActions({
+      getClassify: "goods/getClassify",
+      selectClassify: "search/selectClassify"
+    }),
     selectPrice() {
       this.ispriceOrder = !this.ispriceOrder;
+      this.isSaleOrder = false;
+      // 默认将第一个设置为true
+      this.priceOrderList[0].active = true;
     },
     selectPriceOrder(index) {
       if (this.priceOrderList.length) {
         for (let i = 0; i < this.priceOrderList.length; i++) {
           if (this.priceOrderList[i].active) {
             this.priceOrderList[i].active = false;
-            break; 
+            break;
           }
         }
         this.priceOrderList[index].active = true;
         this.$set(this.priceOrderList, index, this.priceOrderList[index]);
       }
+    },
+    selectSales() {
+      this.isSaleOrder = true;
+      this.ispriceOrder = false;
+      for (let i = 0; i < this.priceOrderList.length; i++) {
+        if (this.priceOrderList[i].active) {
+          this.priceOrderList[i].active = false;
+          break;
+        }
+      }
     }
-  },
-  created(){
-  
   }
 };
 </script>

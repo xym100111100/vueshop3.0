@@ -21,13 +21,11 @@ export default {
         },
         ["SET_RCOMGOODS"](state, payload) {
             state.recomgoods = payload.recomgoods
-            console.log(state.recomgoods)
         }
     },
     actions: {
         getNavs(conText, payload) {
             getNavsData().then(res => {
-                // console.log(res);
                 if (res.code === 200) {
                     conText.commit("SET_NAVS", { navs: res.data });
                     // 成功后执行回调函数
