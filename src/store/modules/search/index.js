@@ -1,4 +1,4 @@
-import { getHotKeywordData, getSearchData } from "../../../api/search";
+import { getHotKeywordData, getSearchData, getAttrsData } from "../../../api/search";
 import Vue from 'vue'
 
 export default {
@@ -21,38 +21,11 @@ export default {
         },
         minPrice: '',
         maxPrice: '',
-        attrs: [{
-            title: "颜色",
-            isHide: false,
-            param: [
-                {
-                    title: '白色',
-                    active: false
-                },
-                {
-                    title: '黑色',
-                    active: true
-                }
-            ]
-
-        },
-        {
-            title: "尺码",
-            isHide: false,
-            param: [
-                {
-                    title: '38',
-                    active: false
-                },
-                {
-                    title: '39',
-                    active: true
-                }
-            ]
-
-        }],
+        attrs: [],
         searchData: [],
-        cid: ""
+        cid: "",
+        params: [],
+        total: 0
     },
     mutations: {
         ["SET_MINPRICE"](state, payload) {
@@ -101,6 +74,7 @@ export default {
         },
         ["SET_SEARCH_DATA"](state, payload) {
             state.searchData = payload.searchdata;
+            state.total = payload.total
 
         },
         ["SET_SEARCH_DATA_PAGE"](state, payload) {
@@ -111,7 +85,42 @@ export default {
         },
         ["SET_CID"](state, payload) {
             state.cid = payload.cid
-            console.log(state.cid)
+
+        },
+        ["SET_ATTRS"](state, payload) {
+            state.attrs = payload.attrs
+            console.log(state.attrs)
+        },
+        ["SET_PARAMS"](state, payload) {
+            if (state.attrs.length > 0) {
+                state.params = [];
+                for (let i = 0; i < state.attrs.length; i++) {
+                    for (let j = 0; j < state.attrs[i].param.length; j++) {
+                        if (state.attrs[i].param[j].active) {
+                            state.params.push(state.attrs[i].param[j].pid)
+                        }
+                    }
+                }
+            }
+
+        },
+        ["RESET_SCREEN"](state, payload) {
+            state.cid = "";
+            for (let i = 0; i < state.pariceData.items.length; i++) {
+                state.pariceData.items[i].active = false;
+            }
+            state.minPrice = "";
+            state.maxPrice = "";
+            state.params = [];
+            console.log(state.attrs)
+            for (let i = 0; i < state.attrs.length; i++) {
+                for (let j = 0; j < state.attrs[i].param.length; j++) {
+                    state.attrs[i].param[j].active = false
+                    Vue.set(state.attrs[i].param[j], j, state.attrs[i].param[j].active)
+                }
+            }
+
+
         }
 
 
@@ -138,15 +147,16 @@ export default {
         },
         getSearch(conText, payload) {
             getSearchData(payload).then((res) => {
-                console.log(res)
+                let pagenum = 0;
                 if (res.code === 200) {
-                    conText.commit("SET_SEARCH_DATA", { searchdata: res.data })
-                    if (payload && payload.success) {
-                        payload.success(res)
-                    }
-                }else{
-                    conText.commit("SET_SEARCH_DATA", { searchdata: [] })
+                    conText.commit("SET_SEARCH_DATA", { searchdata: res.data, total: res.pageinfo.total })
+                    pagenum = res.pageinfo.pagenum
+                } else {
+                    conText.commit("SET_SEARCH_DATA", { searchdata: [], total: 0 })
 
+                }
+                if (payload && payload.success && (res.code === 200 || res.code === 201)) {
+                    payload.success(pagenum)
                 }
 
             })
@@ -158,6 +168,35 @@ export default {
                 }
             })
         },
+        getAttrs(conText, payload) {
+            getAttrsData(payload).then((res) => {
+                if (res.code === 200) {
+                    for (let i = 0; i < res.data.length; i++) {
+                        res.data[i].isHide = false;
+                        for (let j = 0; j < res.data[i].param.length; j++) {
+                            res.data[i].param[j].active = false
+                        }
+                    }
+                    conText.commit("SET_ATTRS", { attrs: res.data })
+                } else {
+                    conText.commit("SET_ATTRS", { attrs: [] })
+                }
+                if (payload && payload.success && (res.code === 200 || res.code === 201)) {
+                    payload.success()
+                }
+
+            })
+        },
+        resetScreen(conText, payload) {
+            let array = conText.rootState.goods.classifys;
+            for (let i = 0; i < array.length; i++) {
+                if (array[i].active) {
+                    array[i].active = false;
+                    break
+                }
+            }
+            conText.commit("RESET_SCREEN")
+        }
     },
 
 }

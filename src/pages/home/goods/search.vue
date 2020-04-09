@@ -120,9 +120,9 @@
       <div class="handel-wrap">
         <div class="item">
           共
-          <span>10</span>件
+          <span>{{total}}</span>件
         </div>
-        <div class="item reset">全部重置</div>
+        <div class="item reset" @click="resetScreen">全部重置</div>
         <div class="item sure" @click="sureSubmite">确定</div>
       </div>
     </div>
@@ -171,6 +171,7 @@ export default {
       "touchmove",
       this.scrollPreventDefault
     );
+    this.pullUp.uneventSrcoll();
   },
   created() {
     this.getClassify({
@@ -182,7 +183,17 @@ export default {
     });
     this.pullUp = new UpRefresh();
     this.otype = "all";
+    // 必须在init上面
+    this.resetScreen();
     this.init();
+    this.getAttrs({
+      keyword: this.keyword,
+      success: () => {
+        this.$nextTick(() => {
+          this.myIScroll.refresh();
+        });
+      }
+    });
   },
   computed: {
     ...mapState({
@@ -192,7 +203,9 @@ export default {
       maxPrice: state => state.search.maxPrice,
       attrs: state => state.search.attrs,
       searchData: state => state.search.searchData,
-      cid: state => state.search.cid
+      cid: state => state.search.cid,
+      param: state => state.search.params,
+      total: state => state.search.total
     })
   },
   components: {
@@ -209,30 +222,45 @@ export default {
     }
     this.priceOrderList[0].active = true;
     this.otype = "all";
+    // 必须在init上面
+    this.resetScreen();
     this.init();
+    this.getAttrs({
+      keyword: this.keyword,
+      success: () => {
+        this.$nextTick(() => {
+          this.myIScroll.refresh();
+        });
+      }
+    });
     next();
   },
+
   methods: {
     sureSubmite() {
       this.isScreen = false;
+      this.SET_PARAMS();
       this.init();
     },
     init() {
       let jsonParams = {
         keyword: this.keyword,
         otype: this.otype,
-        cid: this.cid
+        cid: this.cid,
+        price1: this.minPrice,
+        price2: this.maxPrice,
+        param: JSON.stringify(this.param)
       };
       this.getSearch({
         ...jsonParams,
-        success: res => {
+        success: pagenum => {
           this.$nextTick(() => {
             this.$utils.lazyImg();
           });
           this.pullUp.init(
             {
               curPage: 1,
-              maxPage: parseInt(res.pageinfo.pagenum),
+              maxPage: parseInt(pagenum),
               offsetBottom: 100
             },
             page => {
@@ -249,7 +277,8 @@ export default {
       SET_MINPRICE: "search/SET_MINPRICE",
       SET_MAXPRICE: "search/SET_MAXPRICE",
       HIDE_ATTR: "search/HIDE_ATTR",
-      SELECT_ATTR: "search/SELECT_ATTR"
+      SELECT_ATTR: "search/SELECT_ATTR",
+      SET_PARAMS: "search/SET_PARAMS"
     }),
     scrollPreventDefault(e) {
       e.preventDefault();
@@ -258,7 +287,9 @@ export default {
       getClassify: "goods/getClassify",
       selectClassify: "search/selectClassify",
       getSearch: "search/getSearch",
-      getSearchPage: "search/getSearchPage"
+      getSearchPage: "search/getSearchPage",
+      getAttrs: "search/getAttrs",
+      resetScreen: "search/resetScreen"
     }),
     selectPrice() {
       this.ispriceOrder = !this.ispriceOrder;
