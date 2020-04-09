@@ -10,7 +10,6 @@ export default {
    mutations: {
       ["SET_CLASSIFYS"](state, payload) {
          state.classifys = payload.classifys
-         console.log( state.classifys)
       },
       ["SELECT_ITEM"](state, payload) {
          // 对数组操作前先对数组进行判断

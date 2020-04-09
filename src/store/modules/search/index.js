@@ -1,4 +1,4 @@
-import { getHotKeywordData } from "../../../api/search";
+import { getHotKeywordData, getSearchData } from "../../../api/search";
 import Vue from 'vue'
 
 export default {
@@ -50,7 +50,9 @@ export default {
                 }
             ]
 
-        }]
+        }],
+        searchData: [],
+        cid: ""
     },
     mutations: {
         ["SET_MINPRICE"](state, payload) {
@@ -96,7 +98,23 @@ export default {
         ["SELECT_ATTR"](state, payload) {
             state.attrs[payload.index].param[payload.index2].active = !state.attrs[payload.index].param[payload.index2].active;
             Vue.set(state.attrs[payload.index].param, payload.index2, state.attrs[payload.index].param[payload.index2])
+        },
+        ["SET_SEARCH_DATA"](state, payload) {
+            state.searchData = payload.searchdata;
+
+        },
+        ["SET_SEARCH_DATA_PAGE"](state, payload) {
+            for (let i = 0; i < payload.searchData.length; i++) {
+                state.searchData.push(payload.searchData[i])
+
+            }
+        },
+        ["SET_CID"](state, payload) {
+            state.cid = payload.cid
+            console.log(state.cid)
         }
+
+
     },
     actions: {
         getHotKeyword(conText, payload) {
@@ -116,7 +134,30 @@ export default {
             }
             array[payload.index].active = true;
             Vue.set(array, payload.index, array[payload.index])
-        }
+            conText.commit("SET_CID", { cid: array[payload.index].cid })
+        },
+        getSearch(conText, payload) {
+            getSearchData(payload).then((res) => {
+                console.log(res)
+                if (res.code === 200) {
+                    conText.commit("SET_SEARCH_DATA", { searchdata: res.data })
+                    if (payload && payload.success) {
+                        payload.success(res)
+                    }
+                }else{
+                    conText.commit("SET_SEARCH_DATA", { searchdata: [] })
+
+                }
+
+            })
+        },
+        getSearchPage(conText, payload) {
+            getSearchData(payload).then(res => {
+                if (res.code === 200) {
+                    conText.commit("SET_SEARCH_DATA_PAGE", { searchData: res.data });
+                }
+            })
+        },
     },
 
 }

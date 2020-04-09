@@ -28,59 +28,21 @@
       </div>
     </div>
     <div class="goods-main">
-      <div class="goods-list">
+      <div class="goods-list" v-for="(item,index) in searchData" :key="index">
         <div class="image">
-          <img src="//vueshop.glbuys.com/uploadfiles/1524554409.jpg" />
+          <img src="../../../assets/images/common/lazyImg.jpg" :data-echo="item.image" />
         </div>
         <div class="goods-content">
-          <div class="goods-title">品牌男装</div>
-          <div class="price">¥100</div>
+          <div class="goods-title">{{item.title}}</div>
+          <div class="price">¥{{item.price}}</div>
           <div class="sales">
             销量
-            <span>10</span>件
+            <span>{{item.sales}}</span>件
           </div>
         </div>
       </div>
-      <div class="goods-list">
-        <div class="image">
-          <img src="//vueshop.glbuys.com/uploadfiles/1524554409.jpg" />
-        </div>
-        <div class="goods-content">
-          <div class="goods-title">品牌男装</div>
-          <div class="price">¥1030</div>
-          <div class="sales">
-            销量
-            <span>10</span>件
-          </div>
-        </div>
-      </div>
-      <div class="goods-list">
-        <div class="image">
-          <img src="//vueshop.glbuys.com/uploadfiles/1524554409.jpg" />
-        </div>
-        <div class="goods-content">
-          <div class="goods-title">品牌男装</div>
-          <div class="price">¥1200</div>
-          <div class="sales">
-            销量
-            <span>10</span>件
-          </div>
-        </div>
-      </div>
-      <div class="goods-list">
-        <div class="image">
-          <img src="//vueshop.glbuys.com/uploadfiles/1524554409.jpg" />
-        </div>
-        <div class="goods-content">
-          <div class="goods-title">品牌男装</div>
-          <div class="price">¥1050</div>
-          <div class="sales">
-            销量
-            <span>10</span>件
-          </div>
-        </div>
-      </div>
-      <div class="null-item">没有相关商品！</div>
+
+      <div class="null-item" v-show="searchData.length <= 0">没有相关商品！</div>
     </div>
     <!-- 这里是最外层的蒙版,且与下面的内容独立内不是内部嵌套div-->
     <div ref="mask" class="mask" v-show="isScreen" @click="isScreen = false"></div>
@@ -161,7 +123,7 @@
           <span>10</span>件
         </div>
         <div class="item reset">全部重置</div>
-        <div class="item sure">确定</div>
+        <div class="item sure" @click="sureSubmite">确定</div>
       </div>
     </div>
     <my-search :show="searchShow" :isLocal="true"></my-search>
@@ -171,6 +133,7 @@
 <script>
 import MySearch from "../../../components/search";
 import IScroll from "../../../assets/js/libs/iscroll";
+import UpRefresh from "../../../assets/js/libs/uprefresh";
 
 import { mapState, mapActions, mapMutations } from "vuex";
 export default {
@@ -182,10 +145,10 @@ export default {
       searchShow: {
         show: false
       },
-      ispriceOrder: true,
+      ispriceOrder: false,
       priceOrderList: [
         { otype: "all", title: "综合", active: false },
-        { otype: "up", title: "价格从低到高", active: true },
+        { otype: "up", title: "价格从低到高", active: false },
         { otype: "down", title: "价格从高到低", active: false }
       ],
       isSaleOrder: false,
@@ -217,6 +180,9 @@ export default {
         });
       }
     });
+    this.pullUp = new UpRefresh();
+    this.otype = "all";
+    this.init();
   },
   computed: {
     ...mapState({
@@ -224,7 +190,9 @@ export default {
       pariceData: state => state.search.pariceData,
       minPrice: state => state.search.minPrice,
       maxPrice: state => state.search.maxPrice,
-      attrs: state => state.search.attrs
+      attrs: state => state.search.attrs,
+      searchData: state => state.search.searchData,
+      cid: state => state.search.cid
     })
   },
   components: {
@@ -232,9 +200,49 @@ export default {
   },
   beforeRouteUpdate(to, from, next) {
     this.keyword = to.query.keyword;
+    this.ispriceOrder = false;
+    for (let i = 0; i < this.priceOrderList.length; i++) {
+      if (this.priceOrderList[i].active) {
+        this.priceOrderList[i].active = false;
+        break;
+      }
+    }
+    this.priceOrderList[0].active = true;
+    this.otype = "all";
+    this.init();
     next();
   },
   methods: {
+    sureSubmite() {
+      this.isScreen = false;
+      this.init();
+    },
+    init() {
+      let jsonParams = {
+        keyword: this.keyword,
+        otype: this.otype,
+        cid: this.cid
+      };
+      this.getSearch({
+        ...jsonParams,
+        success: res => {
+          this.$nextTick(() => {
+            this.$utils.lazyImg();
+          });
+          this.pullUp.init(
+            {
+              curPage: 1,
+              maxPage: parseInt(res.pageinfo.pagenum),
+              offsetBottom: 100
+            },
+            page => {
+              console.log(page);
+              this.getSearchPage({ ...jsonParams, page });
+            }
+          );
+        }
+      });
+    },
     ...mapMutations({
       HIDE_PRICE: "search/HIDE_PRICE",
       SELECT_PRICE: "search/SELECT_PRICE",
@@ -248,13 +256,13 @@ export default {
     },
     ...mapActions({
       getClassify: "goods/getClassify",
-      selectClassify: "search/selectClassify"
+      selectClassify: "search/selectClassify",
+      getSearch: "search/getSearch",
+      getSearchPage: "search/getSearchPage"
     }),
     selectPrice() {
       this.ispriceOrder = !this.ispriceOrder;
       this.isSaleOrder = false;
-      // 默认将第一个设置为true
-      this.priceOrderList[0].active = true;
     },
     selectPriceOrder(index) {
       if (this.priceOrderList.length) {
@@ -266,6 +274,8 @@ export default {
         }
         this.priceOrderList[index].active = true;
         this.$set(this.priceOrderList, index, this.priceOrderList[index]);
+        this.otype = this.priceOrderList[index].otype;
+        this.init();
       }
     },
     selectSales() {
@@ -277,6 +287,8 @@ export default {
           break;
         }
       }
+      this.otype = "sales";
+      this.init();
     }
   }
 };
@@ -444,7 +456,7 @@ export default {
 }
 .goods-main .goods-list .goods-title {
   width: 95%;
-  height: 0.6rem;
+  height: 0.8rem;
   font-size: 0.28rem;
   overflow: hidden;
 }
