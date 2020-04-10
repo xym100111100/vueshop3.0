@@ -6,7 +6,7 @@
         <div class="classify-name">{{item.title}}</div>
         <div class="goods-items-wrap">
           <ul v-for="(item2,index2) in item.goods" :key="index2">
-            <li>
+            <li @click="$router.push('/goods/details?gid='+item2.gid)" >
               <img src="../../../assets/images/common/lazyImg.jpg" :data-echo="item2.image" alt />
             </li>
             <li>{{item2.title}}</li>

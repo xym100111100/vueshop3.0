@@ -22,7 +22,7 @@
     </div>
     <div class="quick-nav">
       <ul class="item" v-for="(item,index) in navs" :key="index">
-        <li>
+        <li @click="$router.push('/goods/classify?id='+item.cid)">
           <img
             src="../../../assets/images/common/lazyImg.jpg"
             :alt="item.title"
@@ -37,7 +37,10 @@
       <div class="goods-main" :key="index" v-if="(index+1)%2!==0">
         <div :class="'classify-name color-'+index">—— {{item.title}} ——</div>
         <div class="goods-row-1">
-          <div class="goods-column">
+          <div
+            class="goods-column"
+            @click="$router.push('/goods/details?gid='+(item.items && item.items[0].gid))"
+          >
             <div class="goods-title">{{item.items && item.items[0].title}}</div>
             <div class="goods-tip">精品打折</div>
             <div :class="'goods-price bg-color-'+index">{{item.items && item.items[0].price}}元</div>
@@ -50,7 +53,12 @@
             </div>
           </div>
           <div class="goods-column">
-            <div class="goods-list" v-for="(item2 ,index2) in item.items.slice(1,3)" :key="index2">
+            <div
+              class="goods-list"
+              @click="$router.push('/goods/details?gid='+item2.gid)"
+              v-for="(item2 ,index2) in item.items.slice(1,3)"
+              :key="index2"
+            >
               <div class="goods-list-title">{{item2.title}}</div>
               <div class="goods-list-tip">品质精挑</div>
               <div class="goods-list-image">
@@ -64,7 +72,12 @@
           </div>
         </div>
         <div class="goods-row-2">
-          <div class="goods-list" v-for="(item ,index3) in item.items.slice(3,7)" :key="index3">
+          <div
+            class="goods-list"
+            @click="$router.push('/goods/details?gid='+item.gid)"
+            v-for="(item ,index3) in item.items.slice(3,7)"
+            :key="index3"
+          >
             <div class="goods-list-title">{{item.title}}</div>
             <div class="goods-list-image">
               <img :src="item.image" :alt="item.title" />
@@ -77,7 +90,12 @@
       <div class="goods-main" v-else :key="index">
         <div class="classify-name color-1">—— {{item.title}} ——</div>
         <div class="goods-row-1">
-          <div class="goods-column-2" v-for="(item2,index2) in item.items.slice(0,2)" :key="index2">
+          <div
+            class="goods-column-2"
+            @click="$router.push('/goods/details?gid='+item2.gid)"
+            v-for="(item2,index2) in item.items.slice(0,2)"
+            :key="index2"
+          >
             <div class="goods-title">{{item2.title}}</div>
             <div class="goods-tip">火爆开售</div>
             <div class="goods-image">
@@ -90,7 +108,12 @@
           </div>
         </div>
         <div class="goods-row-2">
-          <div class="goods-list" v-for="(item3,index3) in item.items.slice(2,6)" :key="index3">
+          <div
+            class="goods-list"
+            @click="$router.push('/goods/details?gid='+item3.gid)"
+            v-for="(item3,index3) in item.items.slice(2,6)"
+            :key="index3"
+          >
             <div class="goods-list-title">{{item3.title}}</div>
             <div class="goods-list-image">
               <img
@@ -115,7 +138,12 @@
       <div class="line"></div>
     </div>
     <div class="goods-recm">
-      <div class="goods-list" v-for="(item,index) in recomgoods" :key="index">
+      <div
+        class="goods-list"
+        @click="$router.push('/goods/details?gid='+item.gid)"
+        v-for="(item,index) in recomgoods"
+        :key="index"
+      >
         <div class="goods-image">
           <img src="../../../assets/images/common/lazyImg.jpg" :data-echo="item.image" alt />
         </div>
@@ -380,7 +408,7 @@ export default {
 
 .goods-main .goods-row-1 .goods-column .goods-title {
   width: 91%;
-  height: 0.32rem;
+  height: 0.36rem;
   overflow: hidden;
   position: absolute;
   left: 0.2rem;
@@ -434,7 +462,7 @@ export default {
 }
 .goods-main .goods-row-1 .goods-column .goods-list-title {
   width: 2.04rem;
-  height: 0.32rem;
+  height: 0.36rem;
   font-size: 0.28rem;
   position: absolute;
   overflow: hidden;
@@ -482,6 +510,7 @@ export default {
   font-weight: bold;
   overflow: hidden;
   text-align: center;
+  line-height: 0.4rem;
 }
 .goods-main .goods-row-2 .goods-list .goods-list-image {
   height: 1.5rem;
@@ -516,7 +545,7 @@ export default {
 
 .goods-main .goods-row-1 .goods-column-2 .goods-title {
   width: 98%;
-  height: 0.32rem;
+  height: 0.36rem;
   overflow: hidden;
   font-size: 0.28rem;
   font-weight: bold;
