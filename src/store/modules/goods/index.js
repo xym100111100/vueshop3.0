@@ -109,6 +109,11 @@ export default {
          // console.log(state.goods)
       },
       ["SELECT_ATTR"](state, payload) {
+         for (let i = 0; i < state.attrs[payload.index].values.length; i++) {
+            if (state.attrs[payload.index].values[i].active && i !== payload.index2) {
+               state.attrs[payload.index].values[i].active = false;
+            }
+         }
          state.attrs[payload.index].values[payload.index2].active = !state.attrs[payload.index].values[payload.index2].active;
          Vue.set(state.attrs[payload.index].values, payload.index2, state.attrs[payload.index].values[payload.index2])
       }

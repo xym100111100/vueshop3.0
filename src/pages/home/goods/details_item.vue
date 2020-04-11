@@ -72,29 +72,37 @@
       <div class="amount-wrap">
         <div class="amount-name">购买数量</div>
         <div class="amount-input-wrap">
-          <div class="btn dec active">-</div>
+          <div :class="amount > 1?'btn dec ':'btn dec active'" @click="amount > 1? --amount : 1">-</div>
           <div class="amount-input">
-            <input type="tel" value="1" />
+            <input type="tel" :value="amount" @input="setMount" />
           </div>
-          <div class="btn inc">+</div>
+          <div class="btn inc" @click="amount < 10? ++amount : amount">+</div>
         </div>
       </div>
-      <div class="sure-btn">确定</div>
+      <div class="sure-btn" @click="sureSubmite">确定</div>
     </div>
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations } from "vuex";
+import Vue from "vue";
 import Swiper from "../../../assets/js/libs/swiper";
+import { Toast } from "vant";
+import TweenMax from "../../../assets/js/libs/TweenMax";
+Vue.use(Toast);
+
 export default {
   name: "detail-item",
   data() {
     return {
-      isPanel: false
+      isPanel: false,
+      amount: 1
     };
   },
-  created() {},
+  created() {
+    this.isMove = true;
+  },
   methods: {
     ...mapMutations({
       SELECT_ATTR: "goods/SELECT_ATTR"
@@ -103,8 +111,65 @@ export default {
       this.isPanel = true;
     },
     hidePanel() {
-      this.isPanel = false;
+      console.log(this.isMove);
+      if (this.isMove) {
+        this.isPanel = false;
+      }
     },
+    setMount(e) {
+      this.amount = e.target.value;
+      this.amount = this.amount.replace(/[^\d]/g, "");
+      // false undefined 空的时候这个条件都会成立,且这里是一个字符串，使用全等需要加引号。
+      if (!this.amount || this.amount == "0") {
+        this.amount = 1;
+      }
+    },
+    sureSubmite() {
+      if (this.attrs.length > 0) {
+        for (let i = 0; i < this.attrs.length; i++) {
+          let item = this.attrs[i].values.find(item => {
+            return item.active === true;
+          });
+          if (!item) {
+            Toast("请选择" + this.attrs[i].title);
+            return;
+          }
+        }
+      }
+      this.addCart();
+    },
+    addCart() {
+      // 设置不能关闭面板，否则动画会不能正常执行，因为获取了面板的高度
+      
+      let goodsImg = this.$refs["goods-img"],
+        goodsInfo = this.$refs["goods-info"];
+      // 后面设置为true会克隆所有的后代节点
+      let cloneImg = goodsImg.cloneNode(true);
+      cloneImg.style.cssText =
+        "position:absolute;z-index:10;left:0.2rem;top:0.2rem;height:0.4rem;width:0.4rem";
+      goodsInfo.appendChild(cloneImg);
+      // 这里获取购物车使用id是因为跨了组件了，所以使用id，由此可能为什么要使用ref，因为id会造成泛滥。
+      let cartIcon = document.getElementById("cart-icon");
+      //窗口高度减去面板高度的负值
+      let cartTop = window.innerHeight - this.$refs["cart-panel"].offsetHeight;
+      TweenMax.to(cloneImg, 3, {
+        bezier: [
+          { x: cloneImg.offsetLeft, y: -100 },
+          { x: cartIcon.offsetLeft, y: -cartTop }
+        ],
+        onComplete: ()=> {
+          // 可以关闭面板
+
+          cloneImg.remove();
+        
+          console.log(this.isMove);
+        }
+      });
+      TweenMax.to(cloneImg, 0.2, {
+        rotation: 360,
+        repeat: -1 // -1代表无限重复
+      });
+    }
   },
   computed: {
     ...mapState({
