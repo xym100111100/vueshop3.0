@@ -5,7 +5,83 @@ export default {
    namespaced: true,
    state: {
       classifys: [],
-      goods: []
+      goods: [],
+      attrs: [
+         {
+            title: "颜色",
+            values: [
+               {
+                  title: "黑色",
+                  active: false,
+               },
+               {
+                  title: "黄色",
+                  active: false
+               },
+               {
+                  title: "绿色",
+                  active: false
+               },
+               {
+                  title: "红色",
+                  active: false
+               },
+               {
+                  title: "绿色",
+                  active: false
+               },
+               {
+                  title: "红色",
+                  active: false
+               },
+               {
+                  title: "绿色",
+                  active: false
+               },
+               {
+                  title: "红色",
+                  active: false
+               }
+            ]
+         },
+         {
+            title: "规格",
+            values: [
+               {
+                  title: "36",
+                  active: false,
+               },
+               {
+                  title: "37",
+                  active: false
+               },
+               {
+                  title: "38",
+                  active: false
+               },
+               {
+                  title: "39",
+                  active: false
+               },
+               {
+                  title: "39",
+                  active: false
+               },
+               {
+                  title: "39",
+                  active: false
+               },
+               {
+                  title: "39",
+                  active: false
+               },
+               {
+                  title: "39",
+                  active: false
+               }
+            ]
+         }
+      ]
    },
    mutations: {
       ["SET_CLASSIFYS"](state, payload) {
@@ -31,13 +107,17 @@ export default {
       ["SET_GOODS"](state, payload) {
          state.goods = payload.goods
          // console.log(state.goods)
+      },
+      ["SELECT_ATTR"](state, payload) {
+         state.attrs[payload.index].values[payload.index2].active = !state.attrs[payload.index].values[payload.index2].active;
+         Vue.set(state.attrs[payload.index].values, payload.index2, state.attrs[payload.index].values[payload.index2])
       }
    },
    actions: {
       // 左侧分类
       getClassify(conText, payload) {
          getClassifyData().then((res) => {
-            
+
             if (res.code === 200) {
                for (let index = 0; index < res.data.length; index++) {
                   res.data[index].active = false

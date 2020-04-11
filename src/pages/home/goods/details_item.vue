@@ -37,15 +37,15 @@
     </div>
     <div class="bottom-btn-wrap">
       <div class="btn fav">收藏</div>
-      <div class="btn cart">加入购物车</div>
+      <div class="btn cart" @click="showPanel">加入购物车</div>
     </div>
-    <div class="hide"></div>
-    <div ref="cart-panel" class="cart-panel down">
+    <div class="mask" v-show="isPanel" @click="hidePanel()"></div>
+    <div ref="cart-panel" :class="isPanel? 'cart-panel up':'cart-panel down'">
       <div ref="goods-info" class="goods-info">
         <div class="close-panel-wrap">
           <div class="spot"></div>
           <div class="line"></div>
-          <div class="close"></div>
+          <div class="close" @click="hidePanel"></div>
         </div>
         <div ref="goods-img" class="goods-img">
           <img src="//vueshop.glbuys.com/uploadfiles/1524556409.jpg" alt />
@@ -57,18 +57,15 @@
         </div>
       </div>
       <div class="attr-wrap">
-        <div class="attr-list">
-          <div class="attr-name">颜色</div>
+        <div class="attr-list" v-for="(item,index) in attrs" :key="index">
+          <div class="attr-name">{{item.title}}</div>
           <div class="val-wrap">
-            <span class="val active">白色</span>
-            <span class="val">红色</span>
-          </div>
-        </div>
-        <div class="attr-list">
-          <div class="attr-name">尺码</div>
-          <div class="val-wrap">
-            <span class="val active">19</span>
-            <span class="val">20</span>
+            <span
+              @click="SELECT_ATTR({index,index2})"
+              :class="{val:true, active:item2.active}"
+              v-for="(item2,index2) in item.values"
+              :key="index2"
+            >{{item2.title}}</span>
           </div>
         </div>
       </div>
@@ -88,11 +85,31 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from "vuex";
 import Swiper from "../../../assets/js/libs/swiper";
 export default {
   name: "detail-item",
-  created() {
-   
+  data() {
+    return {
+      isPanel: false
+    };
+  },
+  created() {},
+  methods: {
+    ...mapMutations({
+      SELECT_ATTR: "goods/SELECT_ATTR"
+    }),
+    showPanel() {
+      this.isPanel = true;
+    },
+    hidePanel() {
+      this.isPanel = false;
+    },
+  },
+  computed: {
+    ...mapState({
+      attrs: state => state.goods.attrs
+    })
   },
   mounted() {
     new Swiper(this.$refs["swpier-wrap"], {
@@ -106,6 +123,8 @@ export default {
 </script>
 
 <style scoped>
+@import "../../../assets/css/common/swiper.css";
+
 .swpier-wrap {
   width: 100%;
   height: 7rem;
@@ -358,7 +377,7 @@ export default {
 
 .cart-panel .attr-wrap {
   width: auto;
-  max-height: 3.5rem;
+  max-height: 5rem;
   padding-left: 0.2rem;
   background-color: #ffffff;
   overflow-y: scroll;
