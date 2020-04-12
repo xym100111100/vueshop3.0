@@ -1,39 +1,29 @@
 <template>
   <div class="page">
     <div class="reviews-main">
-      <div class="reviews-title">商品评价（10）</div>
-      <div class="reviews-wrap">
-        <div class="reviews-list">
+      <div class="reviews-title">商品评价（{{total}}）</div>
+
+      <div class="reviews-wrap" ref="scroll-reviews" v-show="reviews.length > 0">
+        <div class="reviews-list" v-for="(item,index) in reviews" :key="index">
           <div class="uinfo">
             <div class="head">
-              <img src="//vueshop.glbuys.com/uploadfiles/1524556409.jpg" />
+              <img src="../../../assets/images/common/lazyImg.jpg" :data-echo="item.head" />
             </div>
-            <div class="nickname">李四</div>
+            <div class="nickname">{{item.nickname}}</div>
           </div>
-          <div
-            class="reviews-content"
-          >评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容</div>
-          <div class="reviews-date">2019-07-25</div>
-        </div>
-        <div class="reviews-list">
-          <div class="uinfo">
-            <div class="head">
-              <img src="//vueshop.glbuys.com/uploadfiles/1524556409.jpg" />
-            </div>
-            <div class="nickname">李四</div>
-          </div>
-          <div
-            class="reviews-content"
-          >评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容评价内容</div>
-          <div class="reviews-date">2019-07-25</div>
+          <div class="reviews-content" v-html="item.content"></div>
+          <div class="reviews-date">{{item.times}}</div>
         </div>
       </div>
+      <div class="no-data" v-show="reviews.length <= 0">暂无评价</div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapState, mapActions } from "vuex";
+import UpRefresh from "../../../assets/js/libs/uprefresh";
+
 export default {
   name: "goods-review",
   data() {
@@ -41,13 +31,44 @@ export default {
       gid: this.$route.query.gid ? this.$route.query.gid : ""
     };
   },
+  mounted() {},
+  computed: {
+    ...mapState({
+      reviews: state => state.review.reviews,
+      total: state => state.review.total
+    })
+  },
   created() {
-    this.getReviews({ gid: this.gid });
+    // 获取评价
+    this.getReviews({
+      gid: this.gid,
+      success: pagenum => {
+        this.$nextTick(() => {
+          this.pullUp = new UpRefresh();
+          this.$utils.lazyImg();
+          this.pullUp.init(
+            {
+              curPage: 1,
+              maxPage: parseInt(pagenum),
+              offsetBottom: 100
+            },
+            page => {
+              console.log(page);
+              this.getReviewPage({ gid: this.gid, page });
+            }
+          );
+        });
+      }
+    });
   },
   methods: {
     ...mapActions({
-      getReviews: "review/getReviews"
+      getReviews: "review/getReviews",
+      getReviewPage: "review/getReviewPage"
     })
+  },
+  beforeDestroy() {
+    this.pullUp.uneventSrcoll();
   }
 };
 </script>

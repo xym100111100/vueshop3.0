@@ -33,7 +33,7 @@
         </div>
       </div>
       <div class="no-data" v-show="reviews.length <= 0">暂无评价</div>
-      <div class="reviews-more" >查看更多评价</div>
+      <div class="reviews-more" @click="$router.replace('review?gid='+gid)">查看更多评价</div>
     </div>
     <div class="bottom-btn-wrap">
       <div class="btn fav">收藏</div>
