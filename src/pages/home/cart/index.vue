@@ -1,69 +1,130 @@
 <template>
   <div class="cart-main">
-    <SubHeader title="购物车"></SubHeader>
-    <div class="cart-list">
-      <div class="select-btn active"></div>
+    <SubHeader title="购物车" :isBack="$route.query.from === 'goods_detail'?true:false"></SubHeader>
+    <div class="cart-list" v-for="(item,index) in cartData" :key="index">
+      <div :class="{'select-btn':true, active:item.checked}" @click="selectItem({index})"></div>
       <div class="image-wrap">
         <div class="image">
-          <img src="//vueshop.glbuys.com/uploadfiles/1524556409.jpg" />
+          <img :src="item.img" />
         </div>
-        <div class="del">删除</div>
+        <div class="del" @click="delCart(index)">删除</div>
       </div>
       <div class="goods-wrap">
-        <div class="goods-title">鞋子</div>
+        <div class="goods-title">{{item.title}}</div>
         <div class="goods-attr">
-          <span>
-            颜色：
-            <template>红色</template>
+          <span v-for="(item2,index2) in item.attrs" :key="index2">
+            {{item2.title}}：
+            <template v-for="(item3,index3) in item2.param">{{item3.title}}</template>
           </span>
         </div>
         <div class="buy-wrap">
-          <div class="price">¥30</div>
+          <div class="price">¥{{item.price}}</div>
           <div class="amount-input-wrap">
-            <div class="btn dec">-</div>
+            <div :class="item.amount > 1 ?'btn dec ':'btn dec active'" @click="DEC_COUNT({index})">-</div>
             <div class="amount-input">
-              <input type="tel" value="10" />
+              <input
+                type="tel"
+                @input="SET_AMOUNT({value:$event.target.value,index})"
+                :value="item.amount"
+              />
             </div>
-            <div class="btn inc">+</div>
+            <div class="btn inc" @click="INC_COUNT({index})">+</div>
           </div>
         </div>
       </div>
     </div>
     <div class="orderend-wrap">
       <div class="select-area">
-        <div class="select-wrap">
-          <div class="select-btn"></div>
+        <div class="select-wrap" @click="allSelect">
+          <div :class="{'select-btn':true, active:isAllSelect}"></div>
           <div class="select-text">全选</div>
         </div>
         <div class="total">
           运费：
-          <span>¥10</span>&nbsp;&nbsp;合计：
-          <span>¥20</span>
+          <span>¥{{freight}}</span>&nbsp;&nbsp;合计：
+          <span>¥{{total+freight}}</span>
         </div>
       </div>
-      <div class="orderend-btn">去结算</div>
+      <div :class=" total>0? 'orderend-btn' :'orderend-btn  disable'">去结算</div>
     </div>
   </div>
 </template>
 
 <script>
+import Vue from "vue";
 import SubHeader from "../../../components/sub_header";
-
+import { mapState, mapGetters, mapMutations } from "vuex";
+import { Dialog } from "vant";
+Vue.use(Dialog);
 export default {
   data() {
     return {
-      isAllSelect: true
+      isAllSelect: false
     };
   },
-  created() {},
+  created() {
+    this.init();
+  },
   mounted() {
     document.title = this.$route.meta.title;
   },
-  computed: {},
+  computed: {
+    ...mapState({
+      cartData: state => state.cart.cartData
+    }),
+    ...mapGetters({
+      total: "cart/total",
+      freight: "cart/freight"
+    })
+  },
   components: {
     SubHeader
   },
-  methods: {}
+  methods: {
+    delCart(index) {
+      Dialog.confirm({
+        title: "",
+        message: "确认删除"
+      })
+        .then(() => {
+          this.DEL_CART(index);
+          this.init();
+        })
+        .catch(() => {});
+    },
+    ...mapMutations({
+      DEC_COUNT: "cart/DEC_COUNT",
+      INC_COUNT: "cart/INC_COUNT",
+      DEL_CART: "cart/DEL_CART",
+      SET_AMOUNT: "cart/SET_AMOUNT",
+      SELECT_ITEM: "cart/SELECT_ITEM",
+      SELECT_ALL: "cart/SELECT_ALL"
+    }),
+    selectItem(index) {
+      this.SELECT_ITEM(index);
+      this.init();
+    },
+    allSelect() {
+       if (this.cartData.length > 0) {
+        this.isAllSelect = !this.isAllSelect;
+        this.SELECT_ALL({ checked: this.isAllSelect });
+       }
+    },
+    init() {
+      if (this.cartData.length > 0) {
+        let isAll = true;
+        for (let i = 0; i < this.cartData.length; i++) {
+          if (!this.cartData[i].checked) {
+            isAll = false;
+            break;
+          }
+        }
+        this.isAllSelect = isAll;
+      } else {
+        this.isAllSelect = false;
+      }
+    }
+  }
 };
 </script>
 

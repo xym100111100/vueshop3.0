@@ -10,7 +10,6 @@ export default {
       ["SET_REVIEWS"](state, payload) {
          state.reviews = payload.reviews;
          state.total = payload.total;
-         console.log(state)
       },
       ["SET_REVIEW_PAGE"](state, payload) {
             state.reviews.push(...payload.reviews)

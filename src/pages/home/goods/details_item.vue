@@ -135,7 +135,8 @@ export default {
       getReviews: "review/getReviews"
     }),
     ...mapMutations({
-      SELECT_ATTR: "goods/SELECT_ATTR"
+      SELECT_ATTR: "goods/SELECT_ATTR",
+      ADD_CART: "cart/ADD_CART"
     }),
     showPanel() {
       this.isPanel = true;
@@ -181,7 +182,7 @@ export default {
       let cartIcon = document.getElementById("cart-icon");
       //窗口高度减去面板高度的负值
       let cartTop = window.innerHeight - this.$refs["cart-panel"].offsetHeight;
-      TweenMax.to(cloneImg, 3, {
+      TweenMax.to(cloneImg, 1, {
         bezier: [
           { x: cloneImg.offsetLeft, y: -100 },
           { x: cartIcon.offsetLeft, y: -cartTop }
@@ -190,6 +191,38 @@ export default {
           // 可以关闭面板
           cloneImg.remove();
           this.isMove = true;
+
+          // 将商品加入购物车
+          let attrs = [];
+          for (let i = 0; i < this.attrs.length; i++) {
+            let param = [];
+
+            for (let j = 0; j < this.attrs[i].values.length; j++) {
+              if (this.attrs[i].values[j].active) {
+                param.push({
+                  paramid: this.attrs[i].values[j].vid,
+                  title: this.attrs[i].values[j].value
+                });
+              }
+            }
+            attrs.push({
+              param,
+              title: this.attrs[i].title,
+              attrid: this.attrs[i].attrid
+            });
+          }
+
+          let cartData = {
+            gid: this.gid,
+            title: this.details.title,
+            amount: this.amount,
+            price: this.details.price,
+            img: this.details.images[0],
+            checked: true,
+            freight: this.details.freight,
+            attrs
+          };
+         this.ADD_CART({cartData})
         }
       });
       TweenMax.to(cloneImg, 0.2, {

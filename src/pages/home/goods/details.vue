@@ -16,8 +16,8 @@
           @click="$router.replace('/goods/details/review?gid='+gid)"
         >评价</div>
       </div>
-      <div id="cart-icon" class="cart-icon">
-        <div class="spot"></div>
+      <div id="cart-icon"  class="cart-icon" @click="$router.replace('/cart?from=goods_detail')" >
+        <div v-show="$store.state.cart.cartData.length > 0" class="spot"></div>
       </div>
     </div>
     <div class="sub-page">
