@@ -1,87 +1,12 @@
 import Vue from 'vue'
-import { getClassifyData, getGoodsData } from '../../../api/goods/index'
-
+import { getClassifyData, getGoodsData, getGoodsDetailData, getSpecData } from '../../../api/goods/index'
 export default {
    namespaced: true,
    state: {
       classifys: [],
       goods: [],
-      attrs: [
-         {
-            title: "颜色",
-            values: [
-               {
-                  title: "黑色",
-                  active: false,
-               },
-               {
-                  title: "黄色",
-                  active: false
-               },
-               {
-                  title: "绿色",
-                  active: false
-               },
-               {
-                  title: "红色",
-                  active: false
-               },
-               {
-                  title: "绿色",
-                  active: false
-               },
-               {
-                  title: "红色",
-                  active: false
-               },
-               {
-                  title: "绿色",
-                  active: false
-               },
-               {
-                  title: "红色",
-                  active: false
-               }
-            ]
-         },
-         {
-            title: "规格",
-            values: [
-               {
-                  title: "36",
-                  active: false,
-               },
-               {
-                  title: "37",
-                  active: false
-               },
-               {
-                  title: "38",
-                  active: false
-               },
-               {
-                  title: "39",
-                  active: false
-               },
-               {
-                  title: "39",
-                  active: false
-               },
-               {
-                  title: "39",
-                  active: false
-               },
-               {
-                  title: "39",
-                  active: false
-               },
-               {
-                  title: "39",
-                  active: false
-               }
-            ]
-         }
-      ]
+      details: {},
+      attrs: []
    },
    mutations: {
       ["SET_CLASSIFYS"](state, payload) {
@@ -106,7 +31,7 @@ export default {
       },
       ["SET_GOODS"](state, payload) {
          state.goods = payload.goods
-         // console.log(state.goods)
+         
       },
       ["SELECT_ATTR"](state, payload) {
          for (let i = 0; i < state.attrs[payload.index].values.length; i++) {
@@ -116,6 +41,14 @@ export default {
          }
          state.attrs[payload.index].values[payload.index2].active = !state.attrs[payload.index].values[payload.index2].active;
          Vue.set(state.attrs[payload.index].values, payload.index2, state.attrs[payload.index].values[payload.index2])
+      },
+      ["SET_DETAILS"](state, payload) {
+         state.details = payload.details
+
+      },
+      ["SET_ATTR"](state, payload) {
+         state.attrs = payload.attrs
+        
       }
    },
    actions: {
@@ -142,7 +75,6 @@ export default {
       // 右侧商品
       getGoods(conText, payload) {
          getGoodsData(payload.cid).then((res) => {
-            // console.log(res)
             if (res.code === 200) {
                conText.commit("SET_GOODS", { goods: res.data })
                if (payload && payload.success) {
@@ -155,6 +87,31 @@ export default {
                }
             }
          })
-      }
+      },
+      getGoodsDetail(conText, payload) {
+         getGoodsDetailData(payload.gid).then((res) => {
+            if (res.code === 200) {
+               conText.commit("SET_DETAILS", { details: res.data })
+
+            }
+            if (payload && payload.success && (res.code === 200 || res.code === 201)) {
+               payload.success()
+            }
+         })
+      },
+      getSpec(conText, payload) {
+         getSpecData(payload.gid).then((res) => {
+            if (res.code === 200) {
+               for (let i = 0; i < res.data.length; i++) {
+                  for (let j = 0; j < res.data[i].length; j++) {
+                     res.data[i].values[j].active = false
+                  }
+               }
+
+               conText.commit("SET_ATTR", { attrs: res.data })
+            }
+         })
+      },
+
    }
 }

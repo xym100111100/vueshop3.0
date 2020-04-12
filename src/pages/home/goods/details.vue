@@ -41,7 +41,6 @@ export default {
   },
   methods: {
     changeTebStyle(name) {
-      console.log(name);
       switch (name) {
         case "goods-item":
           this.itemStyle = true;

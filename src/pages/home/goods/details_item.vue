@@ -2,38 +2,38 @@
   <div class="page">
     <div ref="swpier-wrap" class="swpier-wrap swiper-container">
       <div class="swiper-wrapper">
-        <div class="swiper-slide">
-          <img src="//vueshop.glbuys.com/uploadfiles/1524556409.jpg" alt />
-        </div>
-        <div class="swiper-slide">
-          <img src="//vueshop.glbuys.com/uploadfiles/1524556419.jpg" alt />
+        <div class="swiper-slide" v-for="(item,index) in  details.images" :key="index">
+          <img :src="item" alt />
         </div>
       </div>
       <div ref="swiper-pagination" class="swiper-pagination"></div>
     </div>
     <div class="goods-ele-main">
-      <div class="goods-title">高跟鞋女2018新款春季单鞋仙女甜美链子尖头防水台细跟女鞋一字带</div>
-      <div class="price">¥288</div>
+      <div class="goods-title">{{details.title}}</div>
+      <div class="price">¥{{details.price}}</div>
       <ul class="sales-wrap">
-        <li>快递：20元</li>
-        <li>月销量20件</li>
+        <li>快递：{{details.freight}}元</li>
+        <li>月销量{{details.sales}}件</li>
       </ul>
     </div>
     <div class="reviews-main">
-      <div class="reviews-title">商品评价（20）</div>
-      <div class="reviews-wrap">
-        <div class="reviews-list">
-          <div class="uinfo">
-            <div class="head">
-              <img alt src="//vueshop.glbuys.com/uploadfiles/1524556409.jpg" />
+      <div class="reviews-title">商品评价({{total}})</div>
+      <div v-show="reviews.length > 0 ">
+        <div class="reviews-wrap">
+          <div class="reviews-list" v-for="(item,index) in reviews" :key="index">
+            <div class="uinfo">
+              <div class="head">
+                <img src="../../../assets/images/common/lazyImg.jpg" :data-echo="item.head" />
+              </div>
+              <div class="nickname">{{item.nickname}}</div>
             </div>
-            <div class="nickname">张三</div>
+            <div class="reviews-content" v-html="item.content"></div>
+            <div class="reviews-date">{{item.times}}</div>
           </div>
-          <div class="reviews-content">评价内容</div>
-          <div class="reviews-date">2019-03-10</div>
         </div>
       </div>
-      <div class="reviews-more">查看更多评价</div>
+      <div class="no-data" v-show="reviews.length <= 0">暂无评价</div>
+      <div class="reviews-more" >查看更多评价</div>
     </div>
     <div class="bottom-btn-wrap">
       <div class="btn fav">收藏</div>
@@ -48,12 +48,12 @@
           <div class="close" @click="hidePanel"></div>
         </div>
         <div ref="goods-img" class="goods-img">
-          <img src="//vueshop.glbuys.com/uploadfiles/1524556409.jpg" alt />
+          <img :src="details.images && details.images[0]" alt />
         </div>
         <div class="goods-wrap">
-          <div class="goods-title">高跟鞋女2018新款春季单鞋仙女甜美链子尖头防水台细跟女鞋一字带</div>
-          <div class="price">¥29</div>
-          <div class="goods-code">商品编码:23123</div>
+          <div class="goods-title">{{details.title}}</div>
+          <div class="price">¥{{details.price}}</div>
+          <div class="goods-code">商品编码:{{details.gid}}</div>
         </div>
       </div>
       <div class="attr-wrap">
@@ -65,7 +65,7 @@
               :class="{val:true, active:item2.active}"
               v-for="(item2,index2) in item.values"
               :key="index2"
-            >{{item2.title}}</span>
+            >{{item2.value}}</span>
           </div>
         </div>
       </div>
@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 import Vue from "vue";
 import Swiper from "../../../assets/js/libs/swiper";
 import { Toast } from "vant";
@@ -97,13 +97,43 @@ export default {
   data() {
     return {
       isPanel: false,
-      amount: 1
+      amount: 1,
+      gid: this.$route.query.gid ? this.$route.query.gid : "" // 在这里定义以免出错
     };
   },
   created() {
     this.isMove = true;
+    this.getGoodsDetail({
+      gid: this.gid,
+      success: () => {
+        this.$nextTick(() => {
+          new Swiper(this.$refs["swpier-wrap"], {
+            autoplay: 1000,
+            pagination: this.$refs["swiper-pagination"],
+            paginationClickable: true,
+            autoplayDisableOnInteraction: false
+          });
+        });
+      }
+    });
+    // 获取规格
+    this.getSpec({ gid: this.gid });
+    // 获取评价
+    this.getReviews({
+      gid: this.gid,
+      success: () => {
+        this.$nextTick(() => {
+          this.$utils.lazyImg();
+        });
+      }
+    });
   },
   methods: {
+    ...mapActions({
+      getGoodsDetail: "goods/getGoodsDetail",
+      getSpec: "goods/getSpec",
+      getReviews: "review/getReviews"
+    }),
     ...mapMutations({
       SELECT_ATTR: "goods/SELECT_ATTR"
     }),
@@ -111,7 +141,6 @@ export default {
       this.isPanel = true;
     },
     hidePanel() {
-      console.log(this.isMove);
       if (this.isMove) {
         this.isPanel = false;
       }
@@ -140,7 +169,7 @@ export default {
     },
     addCart() {
       // 设置不能关闭面板，否则动画会不能正常执行，因为获取了面板的高度
-      
+      this.isMove = false;
       let goodsImg = this.$refs["goods-img"],
         goodsInfo = this.$refs["goods-info"];
       // 后面设置为true会克隆所有的后代节点
@@ -157,12 +186,10 @@ export default {
           { x: cloneImg.offsetLeft, y: -100 },
           { x: cartIcon.offsetLeft, y: -cartTop }
         ],
-        onComplete: ()=> {
+        onComplete: () => {
           // 可以关闭面板
-
           cloneImg.remove();
-        
-          console.log(this.isMove);
+          this.isMove = true;
         }
       });
       TweenMax.to(cloneImg, 0.2, {
@@ -173,17 +200,13 @@ export default {
   },
   computed: {
     ...mapState({
-      attrs: state => state.goods.attrs
+      attrs: state => state.goods.attrs,
+      details: state => state.goods.details,
+      total: state => state.review.total,
+      reviews: state => state.review.reviews
     })
   },
-  mounted() {
-    new Swiper(this.$refs["swpier-wrap"], {
-      autoplay: 1000,
-      pagination: this.$refs["swiper-pagination"],
-      paginationClickable: true,
-      autoplayDisableOnInteraction: false
-    });
-  }
+  mounted() {}
 };
 </script>
 
