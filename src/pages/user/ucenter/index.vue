@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class='sub-header'>
-            <div class='back'></div>
+            <div class='back hide'></div>
             <div class='title'>个人中心</div>
             <div class="right-btn hide">保存</div>
         </div>
@@ -51,7 +51,7 @@
                 <li>我的收藏</li>
                 <li></li>
             </ul>
-            <div class='btn'>登录/注册</div>
+            <div class='btn' @click="$router.push('/login')" >登录/注册</div>
         </div>
     </div>
 </template>
