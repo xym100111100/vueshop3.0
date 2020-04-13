@@ -18,7 +18,7 @@
         <div>
           <img src="../../../assets/images/home/index/forget.png" alt="忘记密码" /> 忘记密码
         </div>
-        <div @click="$router.push('/reg')">
+        <div @click="$router.push('/reg?from=reg')">
           <img src="../../../assets/images/home/index/reg.png" alt="忘记密码" /> 快速注册
         </div>
       </div>

@@ -1,44 +1,44 @@
-import {loginData,safeUserData,safeOutLoginData} from "../../../api/user";
-let modules={
-    namespaced:true,
-    state:{
-        uid:localStorage['uid']?localStorage['uid']:"",
-        nickname:localStorage['nickname']?localStorage['nickname']:"",
-        isLogin:localStorage['isLogin']?Boolean(localStorage['isLogin']):false,
-        authToken:localStorage["authToken"]?localStorage["authToken"]:""
+import { loginData, regUserData, safeUserData, safeOutLoginData, isRegData, checkVcodeData } from "../../../api/user";
+let modules = {
+    namespaced: true,
+    state: {
+        uid: localStorage['uid'] ? localStorage['uid'] : "",
+        nickname: localStorage['nickname'] ? localStorage['nickname'] : "",
+        isLogin: localStorage['isLogin'] ? Boolean(localStorage['isLogin']) : false,
+        authToken: localStorage["authToken"] ? localStorage["authToken"] : ""
     },
-    getters:{//有时候我们需要从 store 中的 state 中派生出一些状态，例如对列表进行过滤并计数
+    getters: {//有时候我们需要从 store 中的 state 中派生出一些状态，例如对列表进行过滤并计数
 
     },
-    mutations:{
-        ["SET_LOGIN"](state,payload){
-            state.uid=payload.uid;
-            state.nickname=payload.nickname;
-            state.isLogin=payload.isLogin;
-            state.authToken=payload.authToken;
-            localStorage["uid"]=payload.uid;
-            localStorage['nickname']=payload.nickname;
-            localStorage['isLogin']=payload.isLogin;
-            localStorage["authToken"]=payload.authToken;
+    mutations: {
+        ["SET_LOGIN"](state, payload) {
+            state.uid = payload.uid;
+            state.nickname = payload.nickname;
+            state.isLogin = payload.isLogin;
+            state.authToken = payload.authToken;
+            localStorage["uid"] = payload.uid;
+            localStorage['nickname'] = payload.nickname;
+            localStorage['isLogin'] = payload.isLogin;
+            localStorage["authToken"] = payload.authToken;
         },
-        ["OUT_LOGIN"](state){
-            state.uid="";
-            state.nickname="";
-            state.isLogin=false;
-            state.authToken="";
+        ["OUT_LOGIN"](state) {
+            state.uid = "";
+            state.nickname = "";
+            state.isLogin = false;
+            state.authToken = "";
             localStorage.removeItem("uid");
             localStorage.removeItem("nickname");
             localStorage.removeItem("isLogin");
             localStorage.removeItem("authToken");
         }
     },
-    actions:{
+    actions: {
         //会员登录
-        login(conText,payload){
-            loginData(payload).then(res=>{
-                 console.log(res);
-                if (res.code===200){
-                    conText.commit("SET_LOGIN",{uid:res.data.uid,nickname:res.data.nickname,isLogin:true,authToken:res.data.auth_token});
+        login(conText, payload) {
+            loginData(payload).then(res => {
+                console.log(res);
+                if (res.code === 200) {
+                    conText.commit("SET_LOGIN", { uid: res.data.uid, nickname: res.data.nickname, isLogin: true, authToken: res.data.auth_token });
                 }
                 if (payload.success) {
                     payload.success(res)
@@ -46,22 +46,40 @@ let modules={
             })
         },
         //安全退出
-        outLogin(conText){
-            safeOutLoginData({uid:conText.state.uid}).then(res=>{
+        outLogin(conText) {
+            safeOutLoginData({ uid: conText.state.uid }).then(res => {
                 // console.log(res);
             });
             conText.commit("OUT_LOGIN");
         },
         //会员安全认证
-        safeUser(conText,payload){
+        safeUser(conText, payload) {
             // console.log(conText.state.uid);
-            safeUserData({uid:conText.state.uid,auth_token:conText.state.authToken}).then(res=>{
+            safeUserData({ uid: conText.state.uid, auth_token: conText.state.authToken }).then(res => {
                 // console.log(res);
                 conText.commit("OUT_LOGIN");
-                if (payload.success){
+                if (payload.success) {
                     payload.success(res)
                 }
             });
+        },
+        checkVcode(conText, payload) {
+            return checkVcodeData(payload.vcode).then((res) => {
+                return res
+            })
+        },
+        isReg(conText, payload) {
+            return isRegData(payload.username).then((res) => {
+                return res
+            })
+        },
+        regUser(conText, payload) {
+            regUserData(payload).then((res) => {
+                console.log(res)
+                if (payload && payload.success) {
+                    payload.success(res)
+                }
+            })
         }
     }
 }
