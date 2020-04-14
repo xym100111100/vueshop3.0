@@ -45,7 +45,7 @@
           <span>¥{{total+freight}}</span>
         </div>
       </div>
-      <div :class=" total>0? 'orderend-btn' :'orderend-btn  disable'">去结算</div>
+      <div @click="statement" :class=" total>0? 'orderend-btn' :'orderend-btn  disable'">去结算</div>
     </div>
   </div>
 </template>
@@ -105,10 +105,10 @@ export default {
       this.init();
     },
     allSelect() {
-       if (this.cartData.length > 0) {
+      if (this.cartData.length > 0) {
         this.isAllSelect = !this.isAllSelect;
         this.SELECT_ALL({ checked: this.isAllSelect });
-       }
+      }
     },
     init() {
       if (this.cartData.length > 0) {
@@ -122,6 +122,11 @@ export default {
         this.isAllSelect = isAll;
       } else {
         this.isAllSelect = false;
+      }
+    },
+    statement() {
+      if (this.total > 0) {
+        this.$router.push("/order");
       }
     }
   }
