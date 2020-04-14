@@ -29,3 +29,8 @@ export function isRegData(username) {
 export function regUserData(data) {
     return request(config.baseApi + "/home/user/reg?token=" + config.token, "post", { data })
 }
+
+export function getUserInfoData(uid) {
+    // 这里参数的写法有点不一样，但是和上面的get方法一个意思
+    return request(config.baseApi + "/user/myinfo/userinfo/uid/" + uid + "?token=" + config.token)
+}

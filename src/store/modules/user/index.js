@@ -1,11 +1,13 @@
-import { loginData, regUserData, safeUserData, safeOutLoginData, isRegData, checkVcodeData } from "../../../api/user";
+import { loginData, getUserInfoData, regUserData, safeUserData, safeOutLoginData, isRegData, checkVcodeData } from "../../../api/user";
 let modules = {
     namespaced: true,
     state: {
         uid: localStorage['uid'] ? localStorage['uid'] : "",
         nickname: localStorage['nickname'] ? localStorage['nickname'] : "",
         isLogin: localStorage['isLogin'] ? Boolean(localStorage['isLogin']) : false,
-        authToken: localStorage["authToken"] ? localStorage["authToken"] : ""
+        authToken: localStorage["authToken"] ? localStorage["authToken"] : "",
+        head: localStorage["head"] ? localStorage["head"] : "",
+        points: localStorage["points"] ? localStorage["points"] : 0,
     },
     getters: {//有时候我们需要从 store 中的 state 中派生出一些状态，例如对列表进行过滤并计数
 
@@ -26,10 +28,22 @@ let modules = {
             state.nickname = "";
             state.isLogin = false;
             state.authToken = "";
+            state.head = "";
+            state.points = 0
             localStorage.removeItem("uid");
             localStorage.removeItem("nickname");
             localStorage.removeItem("isLogin");
             localStorage.removeItem("authToken");
+            localStorage.removeItem("cartData");
+            localStorage.removeItem("head")
+            localStorage.removeItem("points")
+        },
+        ["SET_USER_INFO"](state, payload) {
+            state.head = payload.head;
+            state.points = payload.points;
+            localStorage["head"] = payload.head;
+            localStorage["points"] = payload.points;
+
         }
     },
     actions: {
@@ -78,6 +92,16 @@ let modules = {
                 console.log(res)
                 if (payload && payload.success) {
                     payload.success(res)
+                }
+            })
+        },
+        getUserInfo(conText, payload) {
+            getUserInfoData(conText.state.uid).then((res) => {
+                if (res.code === 200) {
+                    conText.commit("SET_USER_INFO", {
+                        head: res.data.head,
+                        points: res.data.points
+                    })
                 }
             })
         }
