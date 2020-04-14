@@ -50,7 +50,6 @@ let modules = {
         //会员登录
         login(conText, payload) {
             loginData(payload).then(res => {
-                console.log(res);
                 if (res.code === 200) {
                     conText.commit("SET_LOGIN", { uid: res.data.uid, nickname: res.data.nickname, isLogin: true, authToken: res.data.auth_token });
                 }

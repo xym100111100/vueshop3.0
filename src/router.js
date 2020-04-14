@@ -73,7 +73,7 @@ let router = new Router({
             path: "/address",
             name: "address",
             component: () => import("./pages/home/address"),
-            meta: { auth: true,title:"确认订单" }
+            meta: { auth: true,title:"选择收货地址" }
         },
         {
             path: "/ucenter",

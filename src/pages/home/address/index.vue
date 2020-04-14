@@ -6,29 +6,29 @@
         <div class="address-nav-name-1">配送地址</div>
         <div class="address-nav-name-2">+添加收货地址</div>
       </div>
-      <div class="address-list">
+      <div class="address-list" v-for="(item,index) in address" :key="index">
         <div class="address-info-wrap">
-          <div class="check-mark"></div>
-          <div class="address-info default">
+          <div class="check-mark" v-if="item.isdefault==='1'?true:false"></div>
+          <div :class="{'address-info':true, default:item.isdefault==='1'?true:false}">
             <div class="person">
-              <span>徐亚明</span>
-              <span>18278904219</span>
+              <span>{{item.name}}</span>
+              <span>{{item.callphone}}</span>
             </div>
             <div class="address">
-              <span class="default">默认</span>
-              <span class="text">北京朝阳</span>
+              <span class="default" v-if="item.isdefault==='1'?true:false">默认</span>
+              <span class="text">{{item.province+item.city+item.area}}</span>
             </div>
           </div>
         </div>
         <div class="handle-wrap">
           <div class="edit"></div>
-          <div class="del"></div>
+          <div class="del" @click="delAddress({index,aid:item.aid})"></div>
         </div>
       </div>
       <div class="no-data" v-show="false">您还没有添加收货地址！</div>
     </div>
   </div>
-</template>
+</template> 
 
 <script>
 import { mapActions, mapState } from "vuex";
@@ -38,6 +38,33 @@ export default {
   name: "my-address",
   components: {
     SubHeader
+  },
+  created() {
+    this.$utils.safeUser(this);
+    this.getAddress();
+  },
+  computed: {
+    ...mapState({
+      address: state => state.address.address,
+      uid: state => state.user.uid
+    })
+  },
+  methods: {
+    ...mapActions({
+      getAddress: "address/getAddress",
+      asynDelAddress: "address/delAddress"
+    }),
+    delAddress(data) {
+      Dialog.confirm({
+        title: "",
+        message: "确认删除"
+      })
+        .then(() => {
+          // 使用扩展运算符组合对象
+          this.asynDelAddress({ ...data, uid: this.uid });
+        })
+        .catch(() => {});
+    }
   }
 };
 </script>
