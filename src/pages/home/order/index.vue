@@ -46,12 +46,19 @@
       </div>
       <ul class="total-wrap">
         <li>商品总额</li>
-        <li>￥{{total+freight}}</li>
+        <li>￥{{total}}</li>
       </ul>
       <ul class="total-wrap">
         <li>运费</li>
         <li>￥{{freight}}</li>
       </ul>
+    </div>
+    <div class="balance-wrap">
+      <div class="price-wrap">
+        <span>实际金额：</span>
+          <span>￥{{total+freight}}</span>
+      </div>
+      <div class="balance-btn">提交订单</div>
     </div>
   </div>
 </template>
@@ -86,9 +93,7 @@ export default {
   created() {
     this.$utils.safeUser(this);
   },
-  mounted() {
-    
-  },
+  mounted() {},
   methods: {}
 };
 </script>

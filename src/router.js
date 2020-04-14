@@ -70,6 +70,12 @@ let router = new Router({
             meta: { auth: true,title:"确认订单" }
         },
         {
+            path: "/address",
+            name: "address",
+            component: () => import("./pages/home/address"),
+            meta: { auth: true,title:"确认订单" }
+        },
+        {
             path: "/ucenter",
             name: "ucenter",
             component: () => import("./pages/user/ucenter")
