@@ -62,13 +62,12 @@ let router = new Router({
             path: "/reg",
             name: "reg",
             component: () => import("./pages/home/reg"),
-            meta: { keepAlive: false }
         },
         {
             path: "/order",
             name: "order",
             component: () => import("./pages/home/order"),
-            meta: { keepAlive: false }
+            meta: { auth: true,title:"确认订单" }
         },
         {
             path: "/ucenter",
@@ -124,9 +123,9 @@ let router = new Router({
         }
     ]
 });
-router.beforeEach((to, from, next) => {
-    if (to.meta.auth) {
-        if (Boolean(localStorage['isLogin'])) {
+router.beforeEach((to,from,next)=>{
+    if (to.meta.auth){
+        if (Boolean(localStorage['isLogin'])){
             next();
         } else {
             next("/login");

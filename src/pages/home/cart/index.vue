@@ -126,7 +126,15 @@ export default {
     },
     statement() {
       if (this.total > 0) {
-        this.$router.push("/order");
+        this.$router.push(
+          "/order",
+          onComplete => {
+           
+          },
+          onAbort => {
+            // 这里是为了避免在全局路由拦截的时候控制台出现的警告
+          }
+        );
       }
     }
   }

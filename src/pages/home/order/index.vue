@@ -27,30 +27,30 @@
         </div>
       </div>
       <div class="goods-wrap">
-        <div class="goods-list">
+        <div class="goods-list" v-for="(item,index) in newCartData" :key="index">
           <div class="image">
-            <img src alt />
+            <img :src="item.img" alt />
           </div>
           <div class="goods-param">
-            <div class="title">鞋子</div>
+            <div class="title">{{item.title}}</div>
             <div class="attr">
-              <span>
-                颜色：
-                <template>白色</template>
+              <span v-for="(item2,index2) in item.attrs" :key="index2">
+                {{item2.title}}：
+                <template v-for="(item3) in item2.param ">{{item3.title}}</template>
               </span>
             </div>
-            <div class="amount">x 20</div>
-            <div class="price">￥3.6</div>
+            <div class="amount">x{{item.amount}}</div>
+            <div class="price">{{item.price}}</div>
           </div>
         </div>
       </div>
       <ul class="total-wrap">
         <li>商品总额</li>
-        <li>￥20</li>
+        <li>￥{{total+freight}}</li>
       </ul>
       <ul class="total-wrap">
         <li>运费</li>
-        <li>￥10</li>
+        <li>￥{{freight}}</li>
       </ul>
     </div>
   </div>
@@ -64,9 +64,31 @@ export default {
   components: {
     SubHeader
   },
-  computed: {},
-  created() {},
-  mounted() {},
+  computed: {
+    ...mapState({
+      cartData: state => state.cart.cartData
+    }),
+    ...mapGetters({
+      total: "cart/total",
+      freight: "cart/freight"
+    }),
+    newCartData() {
+      if (this.cartData.length > 0) {
+        let data = this.cartData.filter(item => {
+          return item.checked;
+        });
+        return data;
+      } else {
+        return [];
+      }
+    }
+  },
+  created() {
+    this.$utils.safeUser(this);
+  },
+  mounted() {
+    
+  },
   methods: {}
 };
 </script>

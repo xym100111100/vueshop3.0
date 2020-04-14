@@ -6,10 +6,23 @@ function lazyImg() {
       throttle: 0 //设置图片延迟加载的时间
    });
 }
+
+// 单点登录验证
+function safeUser(_this) {
+   _this.$store.dispatch("user/safeUser", {
+      success: (res) => {
+         if (res.code !== 200) {
+            _this.$router.replace("/login")
+         }
+      }
+   })
+}
 // 这样是导出一个对象，使用的时候用.lazyImg()
 export default {
-   lazyImg
+   lazyImg,
+   safeUser
 }
 
 // 这样是导出一个方法，使用的时候用直接()
 // export default  lazyImg；
+

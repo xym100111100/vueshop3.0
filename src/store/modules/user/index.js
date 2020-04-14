@@ -64,6 +64,7 @@ let modules = {
             safeOutLoginData({ uid: conText.state.uid }).then(res => {
                 // console.log(res);
             });
+            conText.rootState.cart.cartData = []
             conText.commit("OUT_LOGIN");
         },
         //会员安全认证
@@ -71,7 +72,9 @@ let modules = {
             // console.log(conText.state.uid);
             safeUserData({ uid: conText.state.uid, auth_token: conText.state.authToken }).then(res => {
                 // console.log(res);
-                conText.commit("OUT_LOGIN");
+                if (res.code !== 200) {
+                    conText.commit("OUT_LOGIN");
+                }
                 if (payload.success) {
                     payload.success(res)
                 }
