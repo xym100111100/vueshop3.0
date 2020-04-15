@@ -1,4 +1,4 @@
-import { getAddressData, delAddressData } from "../../../api/address/index"
+import { getAddressData, delAddressData, addAddressData } from "../../../api/address/index"
 import Vue from "vue"
 
 export default {
@@ -16,8 +16,8 @@ export default {
       }
    },
    actions: {
-      getAddress(conText) {
-         getAddressData(conText.state.uid).then((res) => {
+      getAddress(conText, payload) {
+         getAddressData(payload.uid).then((res) => {
             if (res.code === 200) {
                conText.commit('SET_ADDRESS', { address: res.data })
             }
@@ -28,6 +28,14 @@ export default {
             if (res.code === 200) {
                conText.commit("DEL_ADDRESS", { index: payload.index })
             }
+         })
+      },
+      addAddress(conText, payload) {
+         addAddressData(payload).then((res) => {
+            if (res.code === 200 && payload && payload.success) {
+               payload.success(res)
+            }
+
          })
       }
 

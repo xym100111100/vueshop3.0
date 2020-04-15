@@ -67,13 +67,25 @@ let router = new Router({
             path: "/order",
             name: "order",
             component: () => import("./pages/home/order"),
-            meta: { auth: true,title:"确认订单" }
+            meta: { auth: true, title: "确认订单" }
         },
         {
             path: "/address",
             name: "address",
             component: () => import("./pages/home/address"),
-            meta: { auth: true,title:"选择收货地址" }
+            meta: { auth: true, title: "选择收货地址" }
+        },
+        {
+            path: "/address/add",
+            name: "address-add",
+            component: () => import("./pages/home/address/add"),
+            meta: { auth: true, title: "添加收货地址" }
+        },
+        {
+            path: "/address/mod",
+            name: "address-mod",
+            component: () => import("./pages/home/address/mod"),
+            meta: { auth: true, title: "修改收货地址" }
         },
         {
             path: "/ucenter",
@@ -129,9 +141,9 @@ let router = new Router({
         }
     ]
 });
-router.beforeEach((to,from,next)=>{
-    if (to.meta.auth){
-        if (Boolean(localStorage['isLogin'])){
+router.beforeEach((to, from, next) => {
+    if (to.meta.auth) {
+        if (Boolean(localStorage['isLogin'])) {
             next();
         } else {
             next("/login");

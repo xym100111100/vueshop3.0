@@ -11,3 +11,7 @@ export function delAddressData(data) {
    let aid = data.aid ? data.aid : "";
    return request(config.baseApi + "/user/address/del?uid=" + uid + "&aid=" + aid + "&token" + config.token)
 }
+
+export function addAddressData(data) {
+   return request(config.baseApi + "/user/address/add?token" + config.token, "post", data)
+}

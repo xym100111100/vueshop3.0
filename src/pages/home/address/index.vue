@@ -4,7 +4,7 @@
     <div class="main">
       <div class="address-nav">
         <div class="address-nav-name-1">配送地址</div>
-        <div class="address-nav-name-2">+添加收货地址</div>
+        <div class="address-nav-name-2" @click="$router.push('/address/add')" >+添加收货地址</div>
       </div>
       <div class="address-list" v-for="(item,index) in address" :key="index">
         <div class="address-info-wrap">
@@ -41,7 +41,7 @@ export default {
   },
   created() {
     this.$utils.safeUser(this);
-    this.getAddress();
+    this.getAddress({uid:this.uid});
   },
   computed: {
     ...mapState({
