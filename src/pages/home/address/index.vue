@@ -7,7 +7,7 @@
         <div class="address-nav-name-2" @click="$router.push('/address/add')">+添加收货地址</div>
       </div>
       <div class="address-list" v-for="(item,index) in address" :key="index">
-        <div class="address-info-wrap">
+        <div class="address-info-wrap" @click="selectAddress(item.aid)">
           <div class="check-mark" v-if="item.isdefault==='1'?true:false"></div>
           <div :class="{'address-info':true, default:item.isdefault==='1'?true:false}">
             <div class="person">
@@ -39,7 +39,7 @@ export default {
   components: {
     SubHeader
   },
-    mounted() {
+  mounted() {
     document.title = this.$route.meta.title;
   },
   created() {
@@ -67,6 +67,10 @@ export default {
           this.asynDelAddress({ ...data, uid: this.uid });
         })
         .catch(() => {});
+    },
+    selectAddress(aid) {
+      sessionStorage["addressId"] = aid;
+      this.$router.go(-1);
     }
   }
 };

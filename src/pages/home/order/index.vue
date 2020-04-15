@@ -3,15 +3,15 @@
     <SubHeader title="确认订单"></SubHeader>
     <div class="main">
       <div class="address-wrap" @click="$router.push('/address')">
-        <div class="persion-info">
-          <span>收货人：张三</span>
-          <span>13818273552</span>
+        <div v-show="username?true:false" class="persion-info">
+          <span>收货人：{{username}}</span>
+          <span>{{cellphone}}</span>
         </div>
-        <div class="address">
+        <div v-show="username?true:false" class="address">
           <img src="../../../assets/images/home/cart/map.png" alt="收货地址" />
-          <span>北京朝阳</span>
+          <span>{{showArea}}</span>
         </div>
-        <div v-show="false" class="address-null">您的收货地址为空,点击添加收货地址</div>
+        <div v-show="!username?true:false" class="address-null">您的收货地址为空,点击添加收货地址</div>
         <div class="arrow"></div>
         <div class="address-border-wrap">
           <div class="trapezoid style1"></div>
@@ -64,19 +64,34 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapState, mapGetters, mapActions } from "vuex";
 import SubHeader from "../../../components/sub_header";
 export default {
   name: "order",
+  data() {
+    return {
+      addressId: sessionStorage["addressId"] ? sessionStorage["addressId"] : "",
+      username: "",
+      cellphone: "",
+      showArea: ""
+    };
+  },
   components: {
     SubHeader
+  },
+  methods: {
+    ...mapActions({
+      getAddressInfo: "address/getAddressInfo",
+      getDefaultAddress: "address/getDefaultAddress"
+    })
   },
   mounted() {
     document.title = this.$route.meta.title;
   },
   computed: {
     ...mapState({
-      cartData: state => state.cart.cartData
+      cartData: state => state.cart.cartData,
+      uid: state => state.user.uid
     }),
     ...mapGetters({
       total: "cart/total",
@@ -95,8 +110,38 @@ export default {
   },
   created() {
     this.$utils.safeUser(this);
-  },
-  methods: {}
+    if (this.addressId) {
+      this.getAddressInfo({
+        aid: this.addressId,
+        uid: this.uid,
+        success: res => {
+          if (res.code === 200) {
+            this.cellphone = res.data.cellphone;
+            this.username = res.data.name;
+            this.showArea =
+              res.data.province +
+              res.data.city +
+              res.data.area +
+              res.data.address;
+          }
+        }
+      });
+    } else {
+      this.getDefaultAddress({
+        success: res => {
+          if (res.code === 200) {
+            this.cellphone = res.data.cellphone;
+            this.username = res.data.name;
+            this.showArea =
+              res.data.province +
+              res.data.city +
+              res.data.area +
+              res.data.address;
+          }
+        }
+      });
+    }
+  }
 };
 </script>
 
