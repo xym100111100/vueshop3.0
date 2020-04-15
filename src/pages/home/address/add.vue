@@ -39,7 +39,7 @@
           <input v-model="isdefault" type="checkbox" checked />
         </li>
       </ul>
-      <button type="button" class="submit-save" @click="sureSubmite">保存</button>
+      <button type="button" class="submit-save" @click="sureSubmit">保存</button>
     </div>
     <van-popup v-model="isShow">
       <van-area :area-list="dataList" @cancel="isShow=false" @confirm="selectArea" />
@@ -81,6 +81,9 @@ export default {
       uid: state => state.user.uid
     })
   },
+  mounted() {
+    document.title = this.$route.meta.title;
+  },
   methods: {
     ...mapActions({
       addAddress: "address/addAddress"
@@ -96,7 +99,7 @@ export default {
       }
       this.showArea = data.join(" ");
     },
-    sureSubmite() {
+    sureSubmit() {
       if (this.showArea.match(/^\s*$/)) {
         Toast("请输入收件人地区");
         return;

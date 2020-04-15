@@ -4,7 +4,7 @@
     <div class="main">
       <div class="address-nav">
         <div class="address-nav-name-1">配送地址</div>
-        <div class="address-nav-name-2" @click="$router.push('/address/add')" >+添加收货地址</div>
+        <div class="address-nav-name-2" @click="$router.push('/address/add')">+添加收货地址</div>
       </div>
       <div class="address-list" v-for="(item,index) in address" :key="index">
         <div class="address-info-wrap">
@@ -21,7 +21,7 @@
           </div>
         </div>
         <div class="handle-wrap">
-          <div class="edit"></div>
+          <div class="edit" @click="$router.push('/address/mod?aid='+item.aid)"></div>
           <div class="del" @click="delAddress({index,aid:item.aid})"></div>
         </div>
       </div>
@@ -39,9 +39,12 @@ export default {
   components: {
     SubHeader
   },
+    mounted() {
+    document.title = this.$route.meta.title;
+  },
   created() {
     this.$utils.safeUser(this);
-    this.getAddress({uid:this.uid});
+    this.getAddress({ uid: this.uid });
   },
   computed: {
     ...mapState({

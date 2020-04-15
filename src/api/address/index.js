@@ -15,3 +15,14 @@ export function delAddressData(data) {
 export function addAddressData(data) {
    return request(config.baseApi + "/user/address/add?token" + config.token, "post", data)
 }
+
+export function getAddressInfoData(data){
+   let uid = data.uid ? data.uid : "";
+   let aid = data.aid ? data.aid : "";
+   return request(config.baseApi + "/user/address/info?uid=" + uid + "&aid=" + aid + "&token" + config.token)
+}
+
+export function modAddressData(data){
+   return request(config.baseApi + "/user/address/mod?token" + config.token, "post", data)
+
+}

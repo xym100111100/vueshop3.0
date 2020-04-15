@@ -1,4 +1,4 @@
-import { getAddressData, delAddressData, addAddressData } from "../../../api/address/index"
+import { getAddressData, delAddressData, modAddressData, getAddressInfoData, addAddressData } from "../../../api/address/index"
 import Vue from "vue"
 
 export default {
@@ -36,6 +36,20 @@ export default {
                payload.success(res)
             }
 
+         })
+      },
+      getAddressInfo(conText, payload) {
+         getAddressInfoData(payload).then((res) => {
+            if (res.code === 200 && payload && payload.success) {
+               payload.success(res)
+            }
+         })
+      },
+      modAddress(conText, payload) {
+         modAddressData(payload).then((res) => {
+            if (res.code === 200 && payload && payload.success) {
+               payload.success(res)
+            }
          })
       }
 

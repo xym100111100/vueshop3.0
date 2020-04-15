@@ -56,7 +56,7 @@
     <div class="balance-wrap">
       <div class="price-wrap">
         <span>实际金额：</span>
-          <span>￥{{total+freight}}</span>
+        <span>￥{{total+freight}}</span>
       </div>
       <div class="balance-btn">提交订单</div>
     </div>
@@ -70,6 +70,9 @@ export default {
   name: "order",
   components: {
     SubHeader
+  },
+  mounted() {
+    document.title = this.$route.meta.title;
   },
   computed: {
     ...mapState({
@@ -93,7 +96,6 @@ export default {
   created() {
     this.$utils.safeUser(this);
   },
-  mounted() {},
   methods: {}
 };
 </script>
