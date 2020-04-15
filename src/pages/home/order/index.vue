@@ -58,7 +58,7 @@
         <span>实际金额：</span>
         <span>￥{{total+freight}}</span>
       </div>
-      <div class="balance-btn">提交订单</div>
+      <div class="balance-btn" @click="commitOrder">提交订单</div>
     </div>
   </div>
 </template>
@@ -83,7 +83,10 @@ export default {
     ...mapActions({
       getAddressInfo: "address/getAddressInfo",
       getDefaultAddress: "address/getDefaultAddress"
-    })
+    }),
+    commitOrder() {
+      this.$router.push("/order/end");
+    }
   },
   mounted() {
     document.title = this.$route.meta.title;
