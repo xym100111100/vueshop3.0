@@ -82,10 +82,22 @@ export default {
   methods: {
     ...mapActions({
       getAddressInfo: "address/getAddressInfo",
-      getDefaultAddress: "address/getDefaultAddress"
+      getDefaultAddress: "address/getDefaultAddress",
+      addOrder: "order/addOrder"
     }),
     commitOrder() {
-      this.$router.push("/order/end");
+      if (this.total + this.freight > 0) {
+        this.addOrder({
+          freight: this.freight,
+          addsid: this.addressId,
+          goodsData: JSON.stringify(this.cartData),
+          success: res => {
+            if (res.code === 200) {
+              this.$router.push("/order/end");
+            }
+          }
+        });
+      }
     }
   },
   mounted() {
@@ -133,6 +145,7 @@ export default {
       this.getDefaultAddress({
         success: res => {
           if (res.code === 200) {
+            console.log(res);
             this.cellphone = res.data.cellphone;
             this.username = res.data.name;
             this.showArea =
@@ -140,6 +153,7 @@ export default {
               res.data.city +
               res.data.area +
               res.data.address;
+            sessionStorage["addressId"] = res.data.aid;
           }
         }
       });

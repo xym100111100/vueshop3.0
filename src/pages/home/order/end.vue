@@ -3,7 +3,7 @@
     <SubHeader title="下单成功"></SubHeader>
     <div class="main">
       <div class="list success">下单成功！</div>
-      <div class="list ordernum">订单编号：22222</div>
+      <div class="list ordernum">订单编号：{{orderNum}}</div>
       <div class="list">查看订单</div>
       <div class="pay-btn">去付款</div>
     </div>
@@ -17,6 +17,19 @@ export default {
   name: "order-end",
   components: {
     SubHeader
+  },
+  created() {
+    this.getOrderNum();
+  },
+  computed: {
+    ...mapState({
+      orderNum: state => state.order.orderNum
+    })
+  },
+  methods: {
+    ...mapActions({
+      getOrderNum: "order/getOrderNum"
+    })
   }
 };
 </script>

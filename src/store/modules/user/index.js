@@ -35,8 +35,9 @@ let modules = {
             localStorage.removeItem("isLogin");
             localStorage.removeItem("authToken");
             localStorage.removeItem("cartData");
-            localStorage.removeItem("head")
-            localStorage.removeItem("points")
+            localStorage.removeItem("head");
+            localStorage.removeItem("points");
+            sessionStorage.removeItem("addressId")
         },
         ["SET_USER_INFO"](state, payload) {
             state.head = payload.head;

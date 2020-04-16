@@ -107,6 +107,7 @@ export default {
       gid: this.gid,
       success: () => {
         this.$nextTick(() => {
+          document.title = this.details.title;
           new Swiper(this.$refs["swpier-wrap"], {
             autoplay: 1000,
             pagination: this.$refs["swiper-pagination"],
@@ -222,7 +223,7 @@ export default {
             freight: this.details.freight,
             attrs
           };
-         this.ADD_CART({cartData})
+          this.ADD_CART({ cartData });
         }
       });
       TweenMax.to(cloneImg, 0.2, {
