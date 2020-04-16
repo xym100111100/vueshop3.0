@@ -5,7 +5,7 @@
       <div class="list success">下单成功！</div>
       <div class="list ordernum">订单编号：{{orderNum}}</div>
       <div class="list">查看订单</div>
-      <div class="pay-btn">去付款</div>
+      <div class="pay-btn" @click="$router.push('/user/order')">去付款</div>
     </div>
   </div>
 </template>

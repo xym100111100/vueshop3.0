@@ -123,6 +123,24 @@ let router = new Router({
             component: () => import("./pages/home/goods/search")
         },
         {
+            path:'/user/order',
+            name:'user-order',
+            component:()=>import("./pages/user/order"),
+            redirect:"/user/order/list",
+            children:[
+                {
+                    path:"list",
+                    name:"order-list",
+                    component:()=>import("./pages/user/order/list")
+                },
+                {
+                    path:"review",
+                    name:"order-review",
+                    component:()=>import("./pages/user/order/review")
+                }
+            ]
+        },
+        {
             path: "/goods/details",
             name: "goods-details",
             component: () => import("./pages/home/goods/details"),
