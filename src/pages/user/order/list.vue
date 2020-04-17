@@ -1,6 +1,11 @@
 <template>
   <div>
-    <div class="order-list" v-for="(item,index) in orders" :key="index">
+    <div
+      class="order-list"
+      @click="$router.push('/user/order/details?ordernum='+item.ordernum)"
+      v-for="(item,index) in orders"
+      :key="index"
+    >
       <div class="ordernum-wrap">
         <div class="ordernum">订单编号：{{item.ordernum}}</div>
         <div class="status">{{item.status==="0"?"待支付":item.status==="1"?"待收货":"已收货"}}</div>
@@ -18,7 +23,7 @@
           <div
             class="status-btn"
             v-if="item.status==='0'"
-            @click="cancelOrder({index,ordernum:item.ordernum})"
+            @click.stop="cancelOrder({index,ordernum:item.ordernum})"
           >取消订单</div>
           <div class="status-btn">{{item.status==="0"?"去付款":item==="1"?"确认收货":"已收货"}}</div>
         </div>
@@ -35,7 +40,7 @@ export default {
   name: "order-list",
   data() {
     return {
-      status: this.$route.query.status ? this.$route.query.status : ""
+      status: this.$route.query.status ? this.$route.query.status : "all"
     };
   },
   computed: {
@@ -55,7 +60,7 @@ export default {
         .then(() => {
           this.asynCancelOrder({
             index: val.index,
-            ordernum: val.ordernum,
+            ordernum: val.ordernum
           });
         })
         .catch(() => {});
@@ -98,6 +103,9 @@ export default {
     this.status = to.query.status;
     this.init();
     next();
+  },
+  beforeDestroy() {
+    this.pullUp.uneventSrcoll();
   }
 };
 </script>

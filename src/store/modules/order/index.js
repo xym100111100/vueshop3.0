@@ -1,10 +1,10 @@
-import { addOrderData, getOrderNumData, getMyOrderData, cancelOrderData } from "../../../api/order"
-import Vue from 'vue';
+import { addOrderData, getOrderNumData, getOrderDescData, getMyOrderData, cancelOrderData } from "../../../api/order"
 export default {
    namespaced: true,
    state: {
       orderNum: "",
-      orders: []
+      orders: [],
+      orderDesc: {}
    },
    mutations: {
       ["SET_ORDERNUM"](state, payload) {
@@ -18,6 +18,10 @@ export default {
       },
       ["CANCE_ORDER"](state, payload) {
          state.orders.splice(payload.index, 1)
+      },
+      ["SET_ORDER_DESC"](state, payload) {
+         state.orderDesc = payload.orderDesc;
+         console.log(state.orderDesc)
       }
    },
    actions: {
@@ -63,8 +67,15 @@ export default {
       },
       cancelOrder(conText, payload) {
          cancelOrderData({ ...payload, uid: conText.rootState.user.uid }).then((res) => {
-            if (res.code === 200 ) {
+            if (res.code === 200) {
                conText.commit("CANCE_ORDER", { index: payload.index })
+            }
+         })
+      },
+      getOrderDesc(conText, payload) {
+         getOrderDescData({ ...payload, uid: conText.rootState.user.uid }).then((res) => {
+            if (res.code === 200) {
+               conText.commit("SET_ORDER_DESC", { orderDesc: res.data })
             }
          })
       }

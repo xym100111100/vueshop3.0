@@ -17,4 +17,8 @@ export function cancelOrderData(data) {
    return request(config.baseApi + "/user/myorder/clearorder?uid=" + data.uid + "&ordernum=" + data.ordernum + "&token=" + config.token)
 }
 
+export function getOrderDescData(data) {
+   return request(config.baseApi + "/user/myorder/desc?uid=" + data.uid + "&ordernum=" + data.ordernum + "&token=" + config.token)
+}
+
 
