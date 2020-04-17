@@ -8,3 +8,13 @@ export function addOrderData(data) {
 export function getOrderNumData(uid) {
    return request(config.baseApi + "/order/lastordernum?uid=" + uid + "&token=" + config.token)
 }
+
+export function getMyOrderData(data) {
+   return request(config.baseApi + "/user/myorder/index?uid=" + data.uid + "&status=" + data.status + "&token=" + config.token + "&page=" + data.page)
+}
+
+export function cancelOrderData(data) {
+   return request(config.baseApi + "/user/myorder/clearorder?uid=" + data.uid + "&ordernum=" + data.ordernum + "&token=" + config.token)
+}
+
+

@@ -1,22 +1,26 @@
 <template>
   <div>
-    <div class="order-list">
+    <div class="order-list" v-for="(item,index) in orders" :key="index">
       <div class="ordernum-wrap">
-        <div class="ordernum">订单编号：123456</div>
-        <div class="status">已收货</div>
+        <div class="ordernum">订单编号：{{item.ordernum}}</div>
+        <div class="status">{{item.status==="0"?"待支付":item.status==="1"?"待收货":"已收货"}}</div>
       </div>
-      <div class="item-list">
+      <div class="item-list" v-for="(item2,index2) in item.goods" :key="index2">
         <div class="image">
-          <img src="../../../assets/images/common/lazyImg.jpg" alt />
+          <img src="../../../assets/images/common/lazyImg.jpg" :data-echo="item2.image" alt />
         </div>
-        <div class="title">名字</div>
-        <div class="amount">x 20</div>
+        <div class="title">{{item2.title}}</div>
+        <div class="amount">x {{item2.amount}}</div>
       </div>
       <div class="total-wrap">
-        <div class="total">实付金额：¥150.6</div>
+        <div class="total">实付金额：¥{{item.total}}</div>
         <div class="status-wrap">
-          <div class="status-btn">取消订单</div>
-          <div class="status-btn">去付款</div>
+          <div
+            class="status-btn"
+            v-if="item.status==='0'"
+            @click="cancelOrder({index,ordernum:item.ordernum})"
+          >取消订单</div>
+          <div class="status-btn">{{item.status==="0"?"去付款":item==="1"?"确认收货":"已收货"}}</div>
         </div>
       </div>
     </div>
@@ -28,7 +32,73 @@ import { mapActions, mapState } from "vuex";
 import UpRefresh from "../../../assets/js/libs/uprefresh";
 import { Dialog } from "vant";
 export default {
-  name: "order-list"
+  name: "order-list",
+  data() {
+    return {
+      status: this.$route.query.status ? this.$route.query.status : ""
+    };
+  },
+  computed: {
+    ...mapState({
+      orders: state => state.order.orders
+    })
+  },
+  created() {
+    this.init();
+  },
+  methods: {
+    cancelOrder(val) {
+      Dialog.confirm({
+        title: "",
+        message: "确认要取消吗？"
+      })
+        .then(() => {
+          this.asynCancelOrder({
+            index: val.index,
+            ordernum: val.ordernum,
+          });
+        })
+        .catch(() => {});
+    },
+    ...mapActions({
+      getMyOrder: "order/getMyOrder",
+      getOrderPage: "order/getOrderPage",
+      asynCancelOrder: "order/cancelOrder"
+    }),
+    init() {
+      this.getMyOrder({
+        page: 1,
+        status: this.status,
+        success: pagenum => {
+          this.$nextTick(() => {
+            this.pullUp = new UpRefresh();
+            this.$utils.lazyImg();
+            this.pullUp.init(
+              {
+                curPage: 1,
+                maxPage: parseInt(pagenum),
+                offsetBottom: 100
+              },
+              page => {
+                this.getOrderPage({
+                  page,
+                  status: this.status,
+                  success: () => {
+                    this.$utils.lazyImg();
+                  }
+                });
+              }
+            );
+          });
+        }
+      });
+    }
+  },
+  beforeRouteUpdate(to, from, next) {
+    this.status = to.query.status;
+    this.init();
+    next();
+  }
 };
 </script>
 
@@ -83,12 +153,13 @@ export default {
 
 .item-list .title {
   width: 72%;
-  height: auto;
   font-size: 0.28rem;
   position: absolute;
   z-index: 1;
   left: 22%;
   top: 0.2rem;
+  max-height: 0.8rem;
+  overflow: hidden;
 }
 
 .item-list .amount {

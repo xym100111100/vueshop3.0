@@ -86,6 +86,7 @@ export default {
       addOrder: "order/addOrder"
     }),
     commitOrder() {
+      console.log(this.addressId);
       if (this.total + this.freight > 0) {
         this.addOrder({
           freight: this.freight,
@@ -154,6 +155,8 @@ export default {
               res.data.area +
               res.data.address;
             sessionStorage["addressId"] = res.data.aid;
+            //注意这里也需要做,因为上面这里sessionStorege并不会即时同步到data里面
+            this.addressId = res.data.aid;
           }
         }
       });
