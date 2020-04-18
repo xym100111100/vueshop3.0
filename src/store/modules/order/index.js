@@ -1,10 +1,11 @@
-import { addOrderData, getOrderNumData, getOrderDescData, getMyOrderData, cancelOrderData } from "../../../api/order"
+import { addOrderData, getOrderNumData, getReviewOrderData, getOrderDescData, getMyOrderData, cancelOrderData } from "../../../api/order"
 export default {
    namespaced: true,
    state: {
       orderNum: "",
       orders: [],
-      orderDesc: {}
+      orderDesc: {},
+      reviews: []
    },
    mutations: {
       ["SET_ORDERNUM"](state, payload) {
@@ -21,7 +22,15 @@ export default {
       },
       ["SET_ORDER_DESC"](state, payload) {
          state.orderDesc = payload.orderDesc;
-         console.log(state.orderDesc)
+      },
+      ["SET_REVIEWS"](state, payload) {
+         state.reviews = payload.reviews
+
+      },
+      ["SET_REVIEW_PAGE"](state, payload) {
+         console.log(payload.reviews)
+         state.reviews.push(...payload.reviews)
+
       }
    },
    actions: {
@@ -76,6 +85,30 @@ export default {
          getOrderDescData({ ...payload, uid: conText.rootState.user.uid }).then((res) => {
             if (res.code === 200) {
                conText.commit("SET_ORDER_DESC", { orderDesc: res.data })
+            }
+         })
+      },
+      getReviewOrder(conText, payload) {
+         let pageNum = 0;
+         getReviewOrderData({ ...payload, uid: conText.rootState.user.uid }).then((res) => {
+            if (res.code === 200) {
+               pageNum = res.pageinfo.pagenum;
+               conText.commit("SET_REVIEWS", { reviews: res.data })
+            }
+            if ((res.code === 200 || res.code === 201) && payload && payload.success) {
+               payload.success(pageNum)
+            }
+         })
+      },
+      getReviewOrderPage(conText, payload) {
+         getReviewOrderData({ uid: conText.rootState.user.uid, ...payload }).then((res) => {
+            let pageNum = 0;
+            if (res.code === 200) {
+               pageNum = res.pageinfo.pagenum;
+               conText.commit("SET_REVIEW_PAGE", { reviews: res.data })
+            }
+            if ((res.code === 200 || res.code === 201) && payload && payload.success) {
+               payload.success(pageNum)
             }
          })
       }

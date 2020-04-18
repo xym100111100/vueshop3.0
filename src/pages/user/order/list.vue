@@ -68,7 +68,7 @@ export default {
     ...mapActions({
       getMyOrder: "order/getMyOrder",
       getOrderPage: "order/getOrderPage",
-      asynCancelOrder: "order/cancelOrder"
+      asynCancelOrder: "order/cancelOrder",
     }),
     init() {
       this.getMyOrder({
