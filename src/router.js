@@ -128,6 +128,13 @@ let router = new Router({
             component: () => import("./pages/user/order/details")
         },
         {
+            path: "/user/order/add_review",
+            name: "order-add-review",
+            component: () => import("./pages/user/order/add_review"),
+            meta: { auth: true, title: "评价" }
+
+        },
+        {
             path: '/user/order',
             name: 'user-order',
             component: () => import("./pages/user/order"),

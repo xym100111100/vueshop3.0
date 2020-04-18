@@ -1,152 +1,134 @@
 <template>
-    <div class="page">
-        <div class='sub-header'>
-            <div class='back'></div>
-            <div class='title'>评价</div>
-            <div class="right-btn hide">保存</div>
-        </div>
-        <div class='main'>
-            <ul class='service'>
-                <li>服务</li>
-                <li>
-                    <div class='stars'></div>
-                    <div class='stars'></div>
-                    <div class='stars'></div>
-                    <div class='stars'></div>
-                    <div class='stars'></div>
-                </li>
-            </ul>
-            <div class='content-wrap'>
-                <textarea placeholder="来分享你的消费感受吧!"></textarea>
-            </div>
-            <button class='submit' type="button">提交</button>
-        </div>
+  <div class="page">
+    <SubHeader title="评价"></SubHeader>
+
+    <div class="main">
+      <ul class="service" v-for="(item,index) in services" :key="index" >
+        <li>{{item.title}}</li>
+        <li>
+          <div class="stars"></div>
+          <div class="stars"></div>
+          <div class="stars"></div>
+          <div class="stars"></div>
+          <div class="stars"></div>
+        </li>
+      </ul>
+      <div class="content-wrap">
+        <textarea placeholder="来分享你的消费感受吧!"></textarea>
+      </div>
+      <button class="submit" type="button">提交</button>
     </div>
+  </div>
 </template>
 
 <script>
-    export default {
-        name: "add-review"
-    }
+import SubHeader from "../../../components/sub_header";
+import { mapActions, mapState } from "vuex";
+export default {
+  name: "add-review",
+  components: {
+    SubHeader
+  },
+  created() {
+    this.$utils.safeUser(this);
+    this.getReviewService();
+  },
+  methods: {
+    ...mapActions({
+      getReviewService: "order/getReviewService"
+    })
+  },
+  computed: {
+    ...mapState({
+      services: state => state.order.services
+    })
+  },
+  mounted() {
+    document.title = this.$route.meta.title;
+  }
+};
 </script>
 
 <style scoped>
-    .sub-header {
-        width: 100%;
-        height: 1rem;
-        background-color: #FFFFFF;
-        display: flex;
-        display: -webkit-flex;
-        align-items: center;
-        -webkit-align-items: center;
-        border-bottom: 1px solid #EFEFEF;
-        position: fixed;
-        z-index: 10;
-        left: 0;
-        top: 0;
-    }
+.page {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #ffffff;
+}
 
-    .sub-header .back {
-        width: 0.8rem;
-        height: 0.8rem;
-        background-image: url("../../../assets/images/home/goods/back.png");
-        background-size: 100%;
-        background-repeat: no-repeat;
-        background-position: center;
-    }
+.main {
+  width: 100%;
+  padding-top: 1.02rem;
+}
 
-    .sub-header .title {
-        width: 79%;
-        height: auto;
-        font-size: 0.32rem;
-        text-align: center;
-    }
+.service {
+  width: 100%;
+  height: 1rem;
+  border-bottom: 1px solid #efefef;
+  display: flex;
+  display: -webkit-flex;
+  align-items: center;
+  -webkit-align-items: center;
+}
 
-    .sub-header .right-btn {
-        width: auto;
-        height: auto;
-        font-size: 0.32rem;
-    }
+.service li:nth-child(1) {
+  font-size: 0.32rem;
+  margin-left: 3%;
+  margin-right: 15%;
+}
 
-    .page {
-        width: 100%;
-        min-height: 100vh;
-        background-color: #FFFFFF;
-    }
+.service li:nth-child(2) {
+  display: flex;
+  display: -webkit-flex;
+}
 
-    .main {
-        width: 100%;
-        padding-top: 1.02rem;
-    }
+.service .stars {
+  width: 0.4rem;
+  height: 0.4rem;
+  background-image: url("../../../assets/images/user/orders/stars1.png");
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-right: 0.3rem;
+}
 
-    .service {
-        width: 100%;
-        height: 1rem;
-        border-bottom: 1px solid #EFEFEF;
-        display: flex;
-        display: -webkit-flex;
-        align-items: center;
-        -webkit-align-items: center;
-    }
+.service .stars.active {
+  background-image: url("../../../assets/images/user/orders/stars2.png");
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
 
-    .service li:nth-child(1) {
-        font-size: 0.32rem;
-        margin-left: 3%;
-        margin-right: 15%;
-    }
+.content-wrap {
+  width: 100%;
+  height: 4rem;
+  text-align: center;
+  overflow: hidden;
+}
 
-    .service li:nth-child(2) {
-        display: flex;
-        display: -webkit-flex;
-    }
+.content-wrap textarea {
+  width: 95%;
+  height: 90%;
+  font-size: 0.32rem;
+  margin-top: 0.3rem;
+  outline: none;
+  border: 0 none;
+  resize: none;
+}
 
-    .service .stars {
-        width: 0.4rem;
-        height: 0.4rem;
-        background-image: url("../../../assets/images/user/orders/stars1.png");
-        background-size: 100%;
-        background-repeat: no-repeat;
-        background-position: center;
-        margin-right: 0.3rem;
-    }
-
-    .service .stars.active {
-        background-image: url("../../../assets/images/user/orders/stars2.png");
-        background-size: 100%;
-        background-repeat: no-repeat;
-        background-position: center;
-    }
-
-    .content-wrap {
-        width: 100%;
-        height: 4rem;
-        text-align: center;
-        overflow: hidden;
-    }
-
-    .content-wrap textarea {
-        width: 95%;
-        height: 90%;
-        font-size: 0.32rem;
-        margin-top: 0.3rem;
-        outline: none;
-        border: 0 none;
-        resize: none;
-    }
-
-    .submit {
-        width: 90%;
-        height: 0.8rem;
-        background-color: #E51B19;
-        font-size: 0.28rem;
-        color: #FFFFFF;
-        text-align: center;
-        line-height: 0.8rem;
-        border: 0 none;
-        border-radius: 4px;
-        outline: none;
-        margin: 0 auto;
-        display: block;
-        margin-top: 0.3rem;
-    }
+.submit {
+  width: 90%;
+  height: 0.8rem;
+  background-color: #e51b19;
+  font-size: 0.28rem;
+  color: #ffffff;
+  text-align: center;
+  line-height: 0.8rem;
+  border: 0 none;
+  border-radius: 4px;
+  outline: none;
+  margin: 0 auto;
+  display: block;
+  margin-top: 0.3rem;
+}
 </style>

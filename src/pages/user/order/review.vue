@@ -16,7 +16,10 @@
         </div>
         <div class="title">{{item2.title}}</div>
         <div class="amount">x {{item2.amount}}</div>
-        <div class="status-btn">{{item2.status==="0"?"评价":"追加评价"}}</div>
+        <div
+          class="status-btn"
+          @click.stop="$router.push('/user/order/add_review?ordernum='+item.ordernum+'&gid='+item2.gid)"
+        >{{item2.status==="0"?"评价":"追加评价"}}</div>
       </div>
     </div>
   </div>

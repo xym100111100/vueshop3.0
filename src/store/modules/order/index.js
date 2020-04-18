@@ -1,11 +1,12 @@
-import { addOrderData, getOrderNumData, getReviewOrderData, getOrderDescData, getMyOrderData, cancelOrderData } from "../../../api/order"
+import { addOrderData, getOrderNumData, getReviewServiceData, getReviewOrderData, getOrderDescData, getMyOrderData, cancelOrderData } from "../../../api/order"
 export default {
    namespaced: true,
    state: {
       orderNum: "",
       orders: [],
       orderDesc: {},
-      reviews: []
+      reviews: [],
+      services: []
    },
    mutations: {
       ["SET_ORDERNUM"](state, payload) {
@@ -31,6 +32,10 @@ export default {
          console.log(payload.reviews)
          state.reviews.push(...payload.reviews)
 
+      },
+      ["SET_SERVICES"](state, payload) {
+         state.services = payload.services
+   
       }
    },
    actions: {
@@ -109,6 +114,38 @@ export default {
             }
             if ((res.code === 200 || res.code === 201) && payload && payload.success) {
                payload.success(pageNum)
+            }
+         })
+      },
+      getReviewService(conText) {
+         getReviewServiceData().then((res) => {
+            if (res.code === 200) {
+               for (let i = 0; i < res.data.length; i++) {
+                  res.data[i].score = 0;
+                  res.data[i].scores = [
+                     {
+                        value: 1,
+                        active: false
+                     },
+                     {
+                        value: 2,
+                        active: false
+                     },
+                     {
+                        value: 3,
+                        active: false
+                     },
+                     {
+                        value: 4,
+                        active: false
+                     },
+                     {
+                        value: 5,
+                        active: false
+                     },
+                  ]
+               }
+               conText.commit("SET_SERVICES", { services: res.data })
             }
          })
       }

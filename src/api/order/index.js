@@ -24,3 +24,7 @@ export function getReviewOrderData(data) {
    return request(config.baseApi + "/user/myorder/reviewOrder?uid=" + data.uid + "&token=" + config.token + "&page=" + data.page)
 }
 
+
+export function getReviewServiceData() {
+   return request(config.baseApi + "/home/reviews/service?token=" + config.token)
+}
