@@ -163,6 +163,13 @@ let router = new Router({
 
         },
         {
+            path: "/user/mod_password",
+            name: "user-mod-password",
+            component: () => import("./pages/user/mod_password"),
+            meta: { auth: true, title: "修改密码" }
+
+        },
+        {
             path: "/user/address/add",
             name: "user-address",
             component: () => import("./pages/user/address/add"),

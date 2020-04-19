@@ -34,16 +34,16 @@
         <li>个人资料</li>
         <li></li>
       </ul>
-      <ul @click="$router.push('/user/address')" >
-        <li  >收货地址</li>
+      <ul @click="$router.push('/user/address')">
+        <li>收货地址</li>
         <li></li>
       </ul>
-      <ul @click="$router.push('/user/bind_cellphone')" >
-        <li  >绑定手机</li>
+      <ul @click="$router.push('/user/bind_cellphone')">
+        <li>绑定手机</li>
         <li></li>
       </ul>
-      <ul>
-        <li>修改密码</li>
+      <ul @click="$router.push('/user/mod_password')" >
+        <li >修改密码</li>
         <li></li>
       </ul>
       <ul>

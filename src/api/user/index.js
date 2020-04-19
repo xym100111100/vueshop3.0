@@ -46,3 +46,8 @@ export function updateUserData(data) {
 export function updateCellphoneData(data) {
     return request(config.baseApi + "/user/myinfo/updatecellphone?token=" + config.token, "post", data)
 }
+
+
+export function updatePawData(data) {
+    return request(config.baseApi + "/user/myinfo/modpwd?token=" + config.token, "post", data)
+}
