@@ -40,5 +40,9 @@ export function uploadHeadData(data) {
 }
 
 export function updateUserData(data) {
-    return request(config.baseApi + "/user/myinfo/updateuser?token=" + config.token,"post",data)
+    return request(config.baseApi + "/user/myinfo/updateuser?token=" + config.token, "post", data)
+}
+
+export function updateCellphoneData(data) {
+    return request(config.baseApi + "/user/myinfo/updatecellphone?token=" + config.token, "post", data)
 }

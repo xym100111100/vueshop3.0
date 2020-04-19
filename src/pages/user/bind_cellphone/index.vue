@@ -7,13 +7,19 @@
         <div class="text">新手机号验证后，即可绑定成功！</div>
       </div>
       <div class="input-wrap" style="margin-top:0.5rem">
-        <input type="tel" class="cellphone" placeholder="绑定手机号" />
+        <input
+          type="tel"
+          @input="checkUsername"
+          v-model="cellphone"
+          class="cellphone"
+          placeholder="绑定手机号"
+        />
       </div>
       <div class="input-wrap" style="margin-top:0.2rem">
-        <input type="text" class="code" placeholder="请输入短信验证码" />
-        <div class="code-btn"></div>
+        <input type="text" v-model="masCode" class="code" placeholder="请输入短信验证码" />
+        <div :class="{'code-btn':true, success:isSendMsgCode}" @click="getMsgCode">{{msgCodetext}}</div>
       </div>
-      <div class="save-btn">下一步</div>
+      <div class="save-btn" @click="submit">下一步</div>
     </div>
   </div>
 </template>
@@ -24,9 +30,77 @@ import { mapActions } from "vuex";
 import SubHeader from "../../../components/sub_header";
 export default {
   name: "bind-cellphone",
-
+  data() {
+    return {
+      msgCodetext: "获取验证码",
+      isSendMsgCode: false,
+      masCode: "",
+      cellphone: ""
+    };
+  },
   components: {
     SubHeader
+  },
+  created() {},
+  methods: {
+    ...mapActions({
+      isReg: "user/isReg",
+      updateCellphone: "user/updateCellphone"
+    }),
+    submit() {
+      if (this.cellphone.match(/^\s*$/)) {
+        Toast("请输入手机号");
+        return;
+      }
+      if (this.masCode.match(/^\s*$/)) {
+        Toast("请输入验证码");
+        return;
+      }
+      this.updateCellphone({
+        vcode: this.masCode,
+        cellphone: this.cellphone,
+        success: res => {
+          if (res.code === 200) {
+            Toast({
+              duration: 1000,
+              message: "修改成功",
+              onClose: () => {
+                this.$router.go(-1);
+              }
+            });
+          }
+        }
+      });
+    },
+    getMsgCode() {
+      this.isReg({ username: this.cellphone });
+      if (this.isSendMsgCode) {
+        let time = 10;
+        this.isSendMsgCode = false;
+        this.msgCodetext = "重新获取(" + time + ")";
+        this.timer = setInterval(() => {
+          if (time > 0) {
+            time -= 1;
+            this.msgCodetext = "重新获取(" + time + ")";
+          } else {
+            clearInterval(this.timer);
+            this.isSendMsgCode = true;
+            this.msgCodetext = "获取手机验证码";
+          }
+        }, 1000);
+      }
+    },
+    checkUsername() {
+      if (this.cellphone.length === 11) {
+        this.isSendMsgCode = true;
+      } else {
+        this.isSendMsgCode = false;
+      }
+    }
+  },
+
+  beforeDestroy() {
+    clearInterval(this.timer);
   }
 };
 </script>

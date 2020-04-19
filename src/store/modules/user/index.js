@@ -1,4 +1,4 @@
-import { loginData, getUserInfoData, updateUserData, uploadHeadData, regUserData, safeUserData, safeOutLoginData, isRegData, checkVcodeData } from "../../../api/user";
+import { loginData, updateCellphoneData, getUserInfoData, updateUserData, uploadHeadData, regUserData, safeUserData, safeOutLoginData, isRegData, checkVcodeData } from "../../../api/user";
 let modules = {
     namespaced: true,
     state: {
@@ -128,6 +128,13 @@ let modules = {
         updateUser(conText, payload) {
             updateUserData({ ...payload, uid: conText.rootState.user.uid }).then((res) => {
                 console.log(res)
+                if (res.code === 200 && payload && payload.success) {
+                    payload.success(res)
+                }
+            })
+        },
+        updateCellphone(conText, payload) {
+            updateCellphoneData({ ...payload, uid: conText.rootState.user.uid }).then((res) => {
                 if (res.code === 200 && payload && payload.success) {
                     payload.success(res)
                 }
