@@ -42,11 +42,11 @@
         <li>绑定手机</li>
         <li></li>
       </ul>
-      <ul @click="$router.push('/user/mod_password')" >
-        <li >修改密码</li>
+      <ul @click="$router.push('/user/mod_password')">
+        <li>修改密码</li>
         <li></li>
       </ul>
-      <ul>
+      <ul @click="$router.push('/user/fav')">
         <li>我的收藏</li>
         <li></li>
       </ul>

@@ -36,7 +36,7 @@
       <div class="reviews-more" @click="$router.replace('review?gid='+gid)">查看更多评价</div>
     </div>
     <div class="bottom-btn-wrap">
-      <div class="btn fav">收藏</div>
+      <div class="btn fav" @click="addFav">收藏</div>
       <div class="btn cart" @click="showPanel">加入购物车</div>
     </div>
     <div class="mask" v-show="isPanel" @click="hidePanel()"></div>
@@ -133,12 +133,21 @@ export default {
     ...mapActions({
       getGoodsDetail: "goods/getGoodsDetail",
       getSpec: "goods/getSpec",
-      getReviews: "review/getReviews"
+      getReviews: "review/getReviews",
+      asyncAddFav: "goods/addFav"
     }),
     ...mapMutations({
       SELECT_ATTR: "goods/SELECT_ATTR",
       ADD_CART: "cart/ADD_CART"
     }),
+    addFav() {
+      this.asyncAddFav({
+        gid: this.gid,
+        success: () => {
+          Toast("收藏成功");
+        }
+      });
+    },
     showPanel() {
       this.isPanel = true;
     },

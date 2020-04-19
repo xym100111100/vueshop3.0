@@ -170,6 +170,13 @@ let router = new Router({
 
         },
         {
+            path: "/user/fav",
+            name: "user-fav",
+            component: () => import("./pages/user/fav"),
+            meta: { auth: true, title: "我的收藏" }
+
+        },
+        {
             path: "/user/address/add",
             name: "user-address",
             component: () => import("./pages/user/address/add"),

@@ -17,3 +17,15 @@ export function getSpecData(gid = "") {
    let url = config.baseApi + "/home/goods/info?gid=" + gid + "&type=spec&token=" + config.token;
    return request(url)
 }
+
+export function addFavData(data) {
+   return request(config.baseApi + "/goods/fav?uid=" + data.uid + "&gid=" + data.gid + "&token=" + config.token)
+}
+
+export function getFavData(data) {
+   return request(config.baseApi + "/user/fav/index?uid=" + data.uid + "&token=" + config.token + "&page=" + data.page)
+}
+
+export function delFavData(data) {
+   return request(config.baseApi + "/user/fav/del?uid=" + data.uid + "&fid=" + data.fid + "&token=" + config.token)
+}

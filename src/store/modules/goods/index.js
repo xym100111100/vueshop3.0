@@ -1,12 +1,13 @@
 import Vue from 'vue'
-import { getClassifyData, getGoodsData, getGoodsDetailData, getSpecData } from '../../../api/goods/index'
+import { getClassifyData, getFavData, delFavData, addFavData, getGoodsData, getGoodsDetailData, getSpecData } from '../../../api/goods/index'
 export default {
    namespaced: true,
    state: {
       classifys: [],
       goods: [],
       details: {},
-      attrs: []
+      attrs: [],
+      favs: []
    },
    mutations: {
       ["SET_CLASSIFYS"](state, payload) {
@@ -31,7 +32,7 @@ export default {
       },
       ["SET_GOODS"](state, payload) {
          state.goods = payload.goods
-         
+
       },
       ["SELECT_ATTR"](state, payload) {
          for (let i = 0; i < state.attrs[payload.index].values.length; i++) {
@@ -48,7 +49,16 @@ export default {
       },
       ["SET_ATTR"](state, payload) {
          state.attrs = payload.attrs
-        
+
+      },
+      ["SET_FAVS"](state, payload) {
+         state.favs = payload.favs
+      },
+      ["SET_FAVS_PAGE"](state, payload) {
+         state.favs.push(...payload.favs)
+      },
+      ["DEL_FAVS"](state, payload) {
+         state.favs.splice(payload.index, 1)
       }
    },
    actions: {
@@ -112,6 +122,49 @@ export default {
             }
          })
       },
+      addFav(conText, payload) {
+         addFavData({ ...payload, uid: conText.rootState.user.uid }).then((res) => {
+            if (payload && payload.success) {
+               payload.success(res)
+            }
+         })
+      },
+      getFavs(conText, payload) {
+         getFavData({ ...payload, uid: conText.rootState.user.uid }).then((res) => {
+            let pageNum = 0;
+            if (res.code === 200) {
+               pageNum = res.pageinfo.pagenum;
+               conText.commit("SET_FAVS", { favs: res.data })
+            } else {
+               conText.commit("SET_FAVS", { favs: [] })
+            }
+            if ((res.code === 200 || res.code === 201) && payload && payload.success) {
+               payload.success(pageNum)
+            }
+         })
+      },
+      getFavPage(conText, payload) {
+         getFavData({ uid: conText.rootState.user.uid, ...payload }).then((res) => {
+            let pageNum = 0;
+            if (res.code === 200) {
+               pageNum = res.pageinfo.pagenum;
+               conText.commit("SET_FAVS_PAGE", { favs: res.data })
+            }
+            if ((res.code === 200 || res.code === 201) && payload && payload.success) {
+               payload.success(pageNum)
+            }
+         })
+      },
+      delFav(conText, payload) {
+         delFavData({ ...payload, uid: conText.rootState.user.uid }).then((res) => {
+            console.log(res)
+            if (res.code === 200 && payload && payload.success) {
+               conText.commit("DEL_FAVS", { index: payload.index })
+               payload.success(res)
+            }
+         })
+      }
+
 
    }
 }
