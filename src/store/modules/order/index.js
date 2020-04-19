@@ -1,4 +1,4 @@
-import { addOrderData, getOrderNumData, getReviewServiceData, getReviewOrderData, getOrderDescData, getMyOrderData, cancelOrderData } from "../../../api/order"
+import { addOrderData, addReviewData, getOrderNumData, getReviewServiceData, getReviewOrderData, getOrderDescData, getMyOrderData, cancelOrderData } from "../../../api/order"
 export default {
    namespaced: true,
    state: {
@@ -29,13 +29,22 @@ export default {
 
       },
       ["SET_REVIEW_PAGE"](state, payload) {
-         console.log(payload.reviews)
          state.reviews.push(...payload.reviews)
 
       },
       ["SET_SERVICES"](state, payload) {
          state.services = payload.services
-   
+
+      },
+      ["SET_REVIEW_SCORE"](state, payload) {
+         state.services[payload.index].score = payload.value
+         for (let i = 0; i < state.services[payload.index].scores.length; i++) {
+            if (i <= payload.index2) {
+               state.services[payload.index].scores[i].active = true
+            } else {
+               state.services[payload.index].scores[i].active = false
+            }
+         }
       }
    },
    actions: {
@@ -121,31 +130,38 @@ export default {
          getReviewServiceData().then((res) => {
             if (res.code === 200) {
                for (let i = 0; i < res.data.length; i++) {
-                  res.data[i].score = 0;
+                  res.data[i].score = 5;
                   res.data[i].scores = [
                      {
                         value: 1,
-                        active: false
+                        active: true
                      },
                      {
                         value: 2,
-                        active: false
+                        active: true
                      },
                      {
                         value: 3,
-                        active: false
+                        active: true
                      },
                      {
                         value: 4,
-                        active: false
+                        active: true
                      },
                      {
                         value: 5,
-                        active: false
+                        active: true
                      },
                   ]
                }
                conText.commit("SET_SERVICES", { services: res.data })
+            }
+         })
+      },
+      addReview(conText, payload) {
+         addReviewData({ ...payload, uid: conText.rootState.user.uid }).then((res) => {
+            if (res.code === 200 && payload && payload.success) {
+               payload.success(res)
             }
          })
       }

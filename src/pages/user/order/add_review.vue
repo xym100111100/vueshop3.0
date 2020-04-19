@@ -3,44 +3,96 @@
     <SubHeader title="评价"></SubHeader>
 
     <div class="main">
-      <ul class="service" v-for="(item,index) in services" :key="index" >
+      <ul class="service" v-for="(item,index) in services" :key="index">
         <li>{{item.title}}</li>
         <li>
-          <div class="stars"></div>
-          <div class="stars"></div>
-          <div class="stars"></div>
-          <div class="stars"></div>
-          <div class="stars"></div>
+          <div
+            :class="{stars:true, active:item2.active}"
+            v-for="(item2,index2) in item.scores"
+            :key="index2"
+            @click="SET_REVIEW_SCORE({index,index2,value:item2.value})"
+          ></div>
         </li>
       </ul>
       <div class="content-wrap">
-        <textarea placeholder="来分享你的消费感受吧!"></textarea>
+        <textarea v-model="context" placeholder="来分享你的消费感受吧!"></textarea>
       </div>
-      <button class="submit" type="button">提交</button>
+      <button class="submit" type="button" @click="submit">提交</button>
     </div>
   </div>
 </template>
 
 <script>
 import SubHeader from "../../../components/sub_header";
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapMutations } from "vuex";
+import { Toast } from "vant";
 export default {
   name: "add-review",
+  data() {
+    return {
+      context: "",
+      gid: this.$route.query.gid ? this.$route.query.gid : "",
+      ordernum: this.$route.query.ordernum ? this.$route.query.ordernum : ""
+    };
+  },
   components: {
     SubHeader
   },
   created() {
     this.$utils.safeUser(this);
     this.getReviewService();
+    this.isSubmit = true;
   },
   methods: {
+    submit() {
+      let rsData = [];
+      if (this.context.match(/^\s*$/)) {
+        Toast("请输入评价内容");
+        return;
+      }
+      if (this.isSubmit) {
+        this.isSubmit = false;
+        if (this.services.length > 0) {
+          for (let i = 0; i < this.services.length; i++) {
+            rsData.push({
+              gid: this.gid,
+              myid: this.uid,
+              rsid: this.services[i].rsid,
+              score: this.services[i].score
+            });
+          }
+        }
+        this.addReview({
+          gid: this.gid,
+          content: this.context,
+          ordernum: this.ordernum,
+          rsdata: JSON.stringify(rsData),
+          success: res => {
+            if (res.code === 200) {
+              Toast({
+                duration: 1000,
+                message: "提交成功",
+                onClose: () => {
+                  this.$router.go(-1);
+                }
+              });
+            }
+          }
+        });
+      }
+    },
+    ...mapMutations({
+      SET_REVIEW_SCORE: "order/SET_REVIEW_SCORE"
+    }),
     ...mapActions({
-      getReviewService: "order/getReviewService"
+      getReviewService: "order/getReviewService",
+      addReview: "order/addReview"
     })
   },
   computed: {
     ...mapState({
-      services: state => state.order.services
+      services: state => state.order.services,
+      uid: state => state.user.uid
     })
   },
   mounted() {

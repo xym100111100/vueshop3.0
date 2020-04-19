@@ -28,3 +28,8 @@ export function getReviewOrderData(data) {
 export function getReviewServiceData() {
    return request(config.baseApi + "/home/reviews/service?token=" + config.token)
 }
+
+
+export function addReviewData(data){
+   return request(config.baseApi+"/home/reviews/add?token="+config.token,"post",data)
+}
