@@ -1,4 +1,4 @@
-import { loginData, getUserInfoData, regUserData, safeUserData, safeOutLoginData, isRegData, checkVcodeData } from "../../../api/user";
+import { loginData, getUserInfoData, updateUserData, uploadHeadData, regUserData, safeUserData, safeOutLoginData, isRegData, checkVcodeData } from "../../../api/user";
 let modules = {
     namespaced: true,
     state: {
@@ -41,9 +41,11 @@ let modules = {
         },
         ["SET_USER_INFO"](state, payload) {
             state.head = payload.head;
+            state.nickname = payload.nickname;
             state.points = payload.points;
             localStorage["head"] = payload.head;
             localStorage["points"] = payload.points;
+            localStorage["nickname"] = payload.nickname;
 
         }
     },
@@ -103,8 +105,27 @@ let modules = {
                 if (res.code === 200) {
                     conText.commit("SET_USER_INFO", {
                         head: res.data.head,
-                        points: res.data.points
+                        points: res.data.points,
+                        nickname:res.data.nickname,
                     })
+                }
+                if (res.code === 200 && payload && payload.success) {
+                    payload.success(res)
+                }
+            })
+        },
+        uploadHead(conText, payload) {
+            uploadHeadData(payload).then((res) => {
+                if (res.code === 200 && payload && payload.success) {
+                    payload.success(res)
+                }
+            })
+        },
+        updateUser(conText, payload) {
+            updateUserData({ ...payload, uid: conText.rootState.user.uid }).then((res) => {
+                console.log(res)
+                if (res.code === 200 && payload && payload.success) {
+                    payload.success(res)
                 }
             })
         }

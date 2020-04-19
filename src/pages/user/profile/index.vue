@@ -5,33 +5,31 @@
       <ul class="head">
         <li>头像</li>
         <li>
-          <img  alt />
-          <input ref="headfile" type="file"  />
+          <img :src="head?head:require('../../../assets/images/user/my/default-head.png')" alt />
+          <input @change="uploadHead" ref="headfile" type="file" />
         </li>
       </ul>
       <ul class="list">
         <li>昵称</li>
         <li>
-          <input type="text" placeholder="请设置昵称"  />
+          <input type="text" v-model="nickname" placeholder="请设置昵称" />
         </li>
         <li class="arrow"></li>
       </ul>
       <ul class="list">
         <li>性别</li>
         <li>
-          <input
-            type="text"
-            placeholder="请选择性别"
-            readonly
-          />
+          <input v-model="showGender" @click="show=true" type="text" placeholder="请选择性别" readonly />
         </li>
         <li class="arrow"></li>
       </ul>
     </div>
     <van-action-sheet
+      @select="onSelect"
+      :actions="actions"
+      v-model="show"
       cancel-text="取消"
       title="请选择性别"
-     
     />
   </div>
 </template>
@@ -43,8 +41,73 @@ import { mapActions } from "vuex";
 import SubHeader from "../../../components/sub_header";
 Vue.use(ActionSheet);
 export default {
+  data() {
+    return {
+      head: "",
+      show: false,
+      showGender: "",
+      gender: "",
+      actions: [{ name: "男" }, { name: "女" }],
+      nickname: "",
+      headData: ""
+    };
+  },
+  created() {
+    this.getUserInfo({
+      success: res => {
+        this.nickname = res.data.nickname;
+        this.showGender = res.data.gender === "1" ? "男" : "女";
+        this.head = res.data.head;
+        this.gender = res.data.gender;
+      }
+    });
+  },
   components: {
     SubHeader
+  },
+  methods: {
+    ...mapActions({
+      syncUploadHead: "user/uploadHead",
+      updateUser: "user/updateUser",
+      getUserInfo: "user/getUserInfo"
+    }),
+    uploadHead(e) {
+      if (e.target.files[0]) {
+        this.syncUploadHead({
+          headfile: e.target.files[0],
+          success: res => {
+            this.head =
+              "http://vueshop.glbuys.com/userfiles/head/" + res.data.msbox;
+            this.headData = res.data.msbox;
+          }
+        });
+      }
+    },
+    submit() {
+      if (this.nickname.match(/^\s*$/)) {
+        Toast("请输入昵称");
+        return;
+      }
+      if (this.showGender.match(/^\s*$/)) {
+        Toast("请选择性别");
+        return;
+      }
+      this.updateUser({
+        gender: this.gender,
+        head: this.headData,
+        nickname: this.nickname,
+        success: res => {
+          if(res.code === 200){
+            this.$router.go(-1)
+          }
+        }
+      });
+    },
+    onSelect(val) {
+      this.show = false;
+      this.showGender = val.name;
+      this.gender = val.name === "男" ? "1" : "2";
+    }
   }
 };
 </script>
