@@ -34,8 +34,8 @@
         <li>个人资料</li>
         <li></li>
       </ul>
-      <ul>
-        <li>收货地址</li>
+      <ul @click="$router.push('/user/address')" >
+        <li  >收货地址</li>
         <li></li>
       </ul>
       <ul>

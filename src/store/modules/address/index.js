@@ -31,7 +31,7 @@ export default {
          })
       },
       addAddress(conText, payload) {
-         addAddressData(payload).then((res) => {
+         addAddressData({...payload,uid:conText.rootState.user.uid}).then((res) => {
             if (res.code === 200 && payload && payload.success) {
                payload.success(res)
             }
@@ -39,20 +39,20 @@ export default {
          })
       },
       getAddressInfo(conText, payload) {
-         getAddressInfoData(payload).then((res) => {
+         getAddressInfoData({ ...payload, uid: conText.rootState.user.uid }).then((res) => {
             if (res.code === 200 && payload && payload.success) {
                payload.success(res)
             }
          })
       },
       modAddress(conText, payload) {
-         modAddressData(payload).then((res) => {
+         modAddressData({ ...payload, uid: conText.rootState.user.uid }).then((res) => {
             if (res.code === 200 && payload && payload.success) {
                payload.success(res)
             }
          })
       },
-      getDefaultAddress(conText,payload) {
+      getDefaultAddress(conText, payload) {
          getDefaultAddressData(conText.rootState.user.uid).then((res) => {
             if (res.code === 200 && payload && payload.success) {
                payload.success(res)

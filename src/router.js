@@ -142,6 +142,27 @@ let router = new Router({
 
         },
         {
+            path: "/user/address",
+            name: "user-address",
+            component: () => import("./pages/user/address"),
+            meta: { auth: true, title: "地址管理" }
+
+        },
+        {
+            path: "/user/address/mod",
+            name: "user-address",
+            component: () => import("./pages/user/address/mod"),
+            meta: { auth: true, title: "修改地址" }
+
+        },
+        {
+            path: "/user/address/add",
+            name: "user-address",
+            component: () => import("./pages/user/address/add"),
+            meta: { auth: true, title: "增加地址" }
+
+        },
+        {
             path: '/user/order',
             name: 'user-order',
             component: () => import("./pages/user/order"),

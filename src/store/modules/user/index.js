@@ -43,9 +43,11 @@ let modules = {
             state.head = payload.head;
             state.nickname = payload.nickname;
             state.points = payload.points;
+            state.uid = payload.uid
             localStorage["head"] = payload.head;
             localStorage["points"] = payload.points;
             localStorage["nickname"] = payload.nickname;
+            localStorage["uid"] = payload.uid;
 
         }
     },
@@ -106,7 +108,9 @@ let modules = {
                     conText.commit("SET_USER_INFO", {
                         head: res.data.head,
                         points: res.data.points,
-                        nickname:res.data.nickname,
+                        nickname: res.data.nickname,
+                        authToken: res.data.authToken,
+                        uid: res.data.uid
                     })
                 }
                 if (res.code === 200 && payload && payload.success) {
