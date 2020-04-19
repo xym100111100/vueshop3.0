@@ -5,7 +5,7 @@
     </div>
     <div class="user-info-wrap">
       <div class="head">
-       <!--  这里切记要用require转成base64的格式，如果不加:变成表达式的形式就不用 -->
+        <!--  这里切记要用require转成base64的格式，如果不加:变成表达式的形式就不用 -->
         <img :src="head?head:require('../../../assets/images/user/my/default-head.png')" alt />
       </div>
       <div class="nickname">昵称：{{username}}</div>
@@ -30,7 +30,7 @@
       </div>
     </div>
     <div class="menu-list-wrap">
-      <ul>
+      <ul @click="$router.push('/user/profile')">
         <li>个人资料</li>
         <li></li>
       </ul>

@@ -135,6 +135,13 @@ let router = new Router({
 
         },
         {
+            path: "/user/profile",
+            name: "user-profile",
+            component: () => import("./pages/user/profile"),
+            meta: { auth: true, title: "个人资料" }
+
+        },
+        {
             path: '/user/order',
             name: 'user-order',
             component: () => import("./pages/user/order"),
