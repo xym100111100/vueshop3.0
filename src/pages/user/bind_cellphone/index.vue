@@ -1,0 +1,164 @@
+<template>
+  <div class="page">
+    <SubHeader title="绑定手机"></SubHeader>
+    <div class="main">
+      <div class="tip">
+        <div class="icon"></div>
+        <div class="text">新手机号验证后，即可绑定成功！</div>
+      </div>
+      <div class="input-wrap" style="margin-top:0.5rem">
+        <input type="tel" class="cellphone" placeholder="绑定手机号" />
+      </div>
+      <div class="input-wrap" style="margin-top:0.2rem">
+        <input type="text" class="code" placeholder="请输入短信验证码" />
+        <div class="code-btn"></div>
+      </div>
+      <div class="save-btn">下一步</div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { Toast } from "vant";
+import { mapActions } from "vuex";
+import SubHeader from "../../../components/sub_header";
+export default {
+  name: "bind-cellphone",
+
+  components: {
+    SubHeader
+  }
+};
+</script>
+
+<style scoped>
+.sub-header {
+  width: 100%;
+  height: 1rem;
+  background-color: #ffffff;
+  display: flex;
+  display: -webkit-flex;
+  align-items: center;
+  -webkit-align-items: center;
+  border-bottom: 1px solid #efefef;
+  position: fixed;
+  z-index: 10;
+  left: 0;
+  top: 0;
+}
+
+.sub-header .back {
+  width: 0.8rem;
+  height: 0.8rem;
+  background-image: url("../../../assets/images/home/goods/back.png");
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.sub-header .title {
+  width: 79%;
+  height: auto;
+  font-size: 0.32rem;
+  text-align: center;
+}
+
+.sub-header .right-btn {
+  width: auto;
+  height: auto;
+  font-size: 0.32rem;
+}
+
+.page {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #ffffff;
+}
+
+.main {
+  width: 100%;
+  padding-top: 1.02rem;
+}
+
+.main .tip {
+  width: 100%;
+  height: 1rem;
+  background-color: #f3f5c4;
+  color: #ac7700;
+  font-size: 0.28rem;
+  display: flex;
+  display: -webkit-flex;
+  align-items: center;
+  -webkit-align-items: center;
+}
+
+.main .tip .icon {
+  width: 0.4rem;
+  height: 0.4rem;
+  background-image: url("../../../assets/images/user/mobile/tip.png");
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-left: 0.4rem;
+  margin-right: 0.2rem;
+}
+
+.main .tip .text {
+  width: auto;
+  height: auto;
+}
+
+.main .input-wrap {
+  width: 93%;
+  height: 0.8rem;
+  border: #c5cbcf solid 1px;
+  border-radius: 4px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.main .input-wrap .cellphone {
+  width: 93%;
+  height: 90%;
+  font-size: 0.28rem;
+  margin-left: 0.2rem;
+  margin-top: 0.05rem;
+}
+
+.main .input-wrap .code {
+  width: 69%;
+  height: 90%;
+  font-size: 0.28rem;
+  margin-left: 0.2rem;
+  margin-top: 0.05rem;
+  float: left;
+}
+
+.main .input-wrap .code-btn {
+  width: 27%;
+  height: 100%;
+  border-left: #efefef 1px solid;
+  float: left;
+  font-size: 0.28rem;
+  color: #717376;
+  text-align: center;
+  line-height: 0.8rem;
+}
+
+.main .input-wrap .code-btn.success {
+  color: #eb1625;
+}
+
+.main .save-btn {
+  width: 93%;
+  height: 0.8rem;
+  background-color: #e42321;
+  font-size: 0.28rem;
+  color: #ffffff;
+  text-align: center;
+  line-height: 0.8rem;
+  margin: 0 auto;
+  border-radius: 4px;
+  margin-top: 0.2rem;
+}
+</style>

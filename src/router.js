@@ -156,6 +156,13 @@ let router = new Router({
 
         },
         {
+            path: "/user/bind_cellphone",
+            name: "user-bind-cellphone",
+            component: () => import("./pages/user/bind_cellphone"),
+            meta: { auth: true, title: "绑定手机" }
+
+        },
+        {
             path: "/user/address/add",
             name: "user-address",
             component: () => import("./pages/user/address/add"),

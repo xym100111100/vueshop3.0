@@ -38,8 +38,8 @@
         <li  >收货地址</li>
         <li></li>
       </ul>
-      <ul>
-        <li>绑定手机</li>
+      <ul @click="$router.push('/user/bind_cellphone')" >
+        <li  >绑定手机</li>
         <li></li>
       </ul>
       <ul>
