@@ -11,7 +11,7 @@
 export default {
   name: 'app'
 }
-</script>
+</script> 
 
 <style>
     @import "./assets/css/common/public.css";
